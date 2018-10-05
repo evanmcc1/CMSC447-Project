@@ -147,6 +147,6 @@ div#t_create {
     float: right;
     height: 100%;
     width: 55%;
-    /*border-style: dotted;
-    border-color: black;*/
+    border-style: dotted;
+    border-color: black;
 }
