@@ -1,11 +1,12 @@
 body {
     background: #3D85C6;
 }
-
+/*#394C5D*/
 h1 {
     font-family: sans-serif;
     font-size: 3em;
     text-align: center;
+    color: #85200C;
 }
 
 div#header {
