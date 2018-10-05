@@ -1,5 +1,5 @@
 body {
-    background: #e6e6e6;
+    background: #3D85C6;
 }
 
 h1 {
@@ -14,8 +14,8 @@ div#header {
     margin: 10px;
     padding: 10px;
     background-color: #cccccc;
-    border-style: dotted;
-    border-color: black;
+    /*border-style: dotted;*/
+    /*border-color: black;*/
 }
 
 div#headerCC {
@@ -23,11 +23,20 @@ div#headerCC {
     width: auto;
     margin: 10px;
     background-color: #d9ebff;
-    border-style: dotted;
-    border-color: black;
+    /*border-style: dotted;*/
+    /*border-color: black;*/
 }
 
 img#header_logo {
+    height: 140px;
+    width: auto;
+}
+
+img#header_logoLogin {
+    /*display: block;*/
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
     height: 150px;
     width: auto;
 }
@@ -38,27 +47,43 @@ div#console {
     margin: 10px;
     padding: 50px;
     background-color: #cccccc;
-    border-style: dotted;
-    border-color: black;
+    /*border-style: dotted;
+    border-color: black;*/
 }
+
+div#consoleLogin {
+    text-align: center;
+    height: auto;
+    width: auto;
+    margin-top: 50px;
+    margin-left: 150px;
+    margin-right: 150px;
+    margin-bottom: 50px;
+    padding: 30px;
+    background-color: #cccccc;
+    /*border-style: dotted;
+    border-color: black;*/
+}
+
 
 div#login_area {
     height: 400px;
     width: 400px;
     margin: auto;
     background-color: #cccccc;
-    border-style: dotted;
-    border-color: black;
+    /*border-style: dotted;
+    border-color: black;*/
 }
 
 div.login_container {
+    text-align: left;
     width: 300px;
     margin:auto;
     margin-bottom: 20px;
     position: relative;
     background-color: ``;
-    border-style: dotted;
-    border-color: black;
+    /*border-style: dotted;
+    border-color: black;*/
 }
 
 p.label {
@@ -81,8 +106,8 @@ div.button_container {
     margin:auto;
     padding: 5px;
     position: relative;
-    border-style: dotted;
-    border-color: black;
+    /*border-style: dotted;
+    border-color: black;*/
 }
 
 div.float_left {
@@ -98,8 +123,8 @@ div#r_nav {
     float:right;
     height: inherit;
     width: 100px;
-    border-style: dotted;
-    border-color: black;
+    /*border-style: dotted;
+    border-color: black;*/
 }
 
 button.nav {
@@ -113,14 +138,14 @@ div#t_stream {
     float: left;
     height: 100%;
     width: 40%;
-    border-style: dotted;
-    border-color: black;
+    /*border-style: dotted;
+    border-color: black;*/
 }
 
 div#t_create {
     float: right;
     height: 100%;
     width: 55%;
-    border-style: dotted;
-    border-color: black;
+    /*border-style: dotted;
+    border-color: black;*/
 }
