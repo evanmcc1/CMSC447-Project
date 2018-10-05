@@ -1,0 +1,126 @@
+body {
+    background: #e6e6e6;
+}
+
+h1 {
+    font-family: sans-serif;
+    font-size: 3em;
+    text-align: center;
+}
+
+div#header {
+    height: auto;
+    width: auto;
+    margin: 10px;
+    padding: 10px;
+    background-color: #cccccc;
+    border-style: dotted;
+    border-color: black;
+}
+
+div#headerCC {
+    height: 125px;
+    width: auto;
+    margin: 10px;
+    background-color: #d9ebff;
+    border-style: dotted;
+    border-color: black;
+}
+
+img#header_logo {
+    height: 150px;
+    width: auto;
+}
+
+div#console {
+    height: 100%;
+    width: auto;
+    margin: 10px;
+    padding: 50px;
+    background-color: #cccccc;
+    border-style: dotted;
+    border-color: black;
+}
+
+div#login_area {
+    height: 400px;
+    width: 400px;
+    margin: auto;
+    background-color: #cccccc;
+    border-style: dotted;
+    border-color: black;
+}
+
+div.login_container {
+    width: 300px;
+    margin:auto;
+    margin-bottom: 20px;
+    position: relative;
+    background-color: ``;
+    border-style: dotted;
+    border-color: black;
+}
+
+p.label {
+    text-align: right;
+    display: inline;
+}
+
+p.labelCC {
+    text-align: right;
+    float: left;
+}
+
+input {
+    float: right;
+}
+
+div.button_container {
+    width: 300px;
+    height: 30px;
+    margin:auto;
+    padding: 5px;
+    position: relative;
+    border-style: dotted;
+    border-color: black;
+}
+
+div.float_left {
+    float:left;
+}
+
+div.float_right {
+    float:right;
+}
+
+
+div#r_nav {
+    float:right;
+    height: inherit;
+    width: 100px;
+    border-style: dotted;
+    border-color: black;
+}
+
+button.nav {
+    width: auto;
+    height: 28px;
+    margin: 1px;
+    float: right;
+}
+
+div#t_stream {
+    float: left;
+    height: 100%;
+    width: 40%;
+    border-style: dotted;
+    border-color: black;
+}
+
+div#t_create {
+    float: right;
+    height: 100%;
+    width: 55%;
+    border-style: dotted;
+    border-color: black;
+}
