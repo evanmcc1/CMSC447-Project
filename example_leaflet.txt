@@ -147,8 +147,3 @@
 
   </body>
 </html>
-.idea/libraries/R_User_Library.xml
-.idea/modules.xml
-.idea/project.iml
-.idea/vcs.xml
-.idea/workspace.xml
