@@ -60,8 +60,6 @@
             var url = "https://swe.umbc.edu/~huganir1/cs433/javascript/p3/server/wiki.php?";
             var params = "lat=" + lat + "&long=" + long + "&rad=" + rad;
 
-
-
             document.querySelector("div#places").innerHTML = '<h2>Articles</h2>'
             open_article = undefined
 
