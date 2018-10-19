@@ -16,7 +16,13 @@ var __testEvents = [
 		"long":     62.321,
 		"severity": 2,
 		"class":    "animal"
-	}	
+	},
+	{
+		"lat": 		120.132,
+		"long":     62.311,
+		"severity": 3,
+		"class":    "animal"
+	}
 ];
 
 // Namespace
@@ -65,7 +71,6 @@ var LF_MAP = (function() {
         	var matches = true;
 
             for (var key of Object.keys(conditions)) {
-            	alert(marker[key]);
                 if (marker[key] != conditions[key]) {
                 	matches = false;
                     break; // Marker doesn't meet conditions.
@@ -94,7 +99,7 @@ var LF_MAP = (function() {
             var marker = L.marker([event['lat'], event['long']]);
             
             for (var field of Object.keys(event)) {
-            	if (! field == "lat" && ! field == "long") {
+            	if (field != "lat" && field != "long") {
             		marker[field] = event[field];
             	}
             }
