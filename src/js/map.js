@@ -95,12 +95,13 @@ var LF_MAP = (function() {
      * @param events {array} array of event objects.
      */
     map.populate = function(events) {
-        for (var event of events) {
-            var marker = L.marker([event['lat'], event['long']]);
+        for (var e of events) {
+            var marker = L.marker([e['lat'], e['long']]);
             
-            for (var field of Object.keys(event)) {
+            for (var field of Object.keys(e)) {
             	if (field != "lat" && field != "long") {
-            		marker[field] = event[field];
+            		// Puts ALL fields in marker. Maybe not necessary to do all?
+            		marker[field] = e[field];
             	}
             }
 
