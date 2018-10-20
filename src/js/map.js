@@ -1,25 +1,25 @@
 var __testEvents = [
 	{
-		"lat": 		120.123,
-		"long":     62.324,
+		"lat": 		39.123,
+		"long":     -76.824,
 		"severity": 5,
 		"class":    "fire"
 	},
 	{
-		"lat": 		120.125,
-		"long":     62.322,
+		"lat": 		39.125,
+		"long":     -76.822,
 		"severity": 3,
 		"class":    "flood"
 	},
 	{
-		"lat": 		120.122,
-		"long":     62.321,
+		"lat": 		39.122,
+		"long":     -76.821,
 		"severity": 2,
 		"class":    "animal"
 	},
 	{
-		"lat": 		120.132,
-		"long":     62.311,
+		"lat": 		39.132,
+		"long":     -76.811,
 		"severity": 3,
 		"class":    "animal"
 	}
@@ -31,7 +31,7 @@ var NS = {
         zoomSnap: 0,    // If 0, zoom won't snap.
         zoomDelta: 0.6, // Zoom will be a multiple of this.
         minZoom: 8,     // Users can't zoom out beyond this.
-        layers: L.tileLayer('https://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png') // Map style
+        layers: L.tileLayer('http://{s}.tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png') // Map style
     },
     MAP_AUTOPAN_OPTIONS: {
         maxZoom: 15,                        // Map won't autopan beyond this.
@@ -95,13 +95,13 @@ var LF_MAP = (function() {
      * @param events {array} array of event objects.
      */
     map.populate = function(events) {
-        for (var e of events) {
-            var marker = L.marker([e['lat'], e['long']]);
+        for (var event of events) {
+            var marker = L.marker([event['lat'], event['long']]);
             
-            for (var field of Object.keys(e)) {
+            for (var field of Object.keys(event)) {
             	if (field != "lat" && field != "long") {
             		// Puts ALL fields in marker. Maybe not necessary to do all?
-            		marker[field] = e[field];
+            		marker[field] = event[field];
             	}
             }
 
