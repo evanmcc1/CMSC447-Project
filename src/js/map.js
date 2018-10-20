@@ -43,7 +43,7 @@ var NS = {
         opacity: 0.8,
         offset: L.point(10,10),
         className: 'tooltip'
-    }
+    },
     LAT_MAGIC: 68.69,  // Magic constant for turning degree distance to miles.
     LNG_MAGIC: 69.17   // Magic constant for turning degree distance to miles.
 };
