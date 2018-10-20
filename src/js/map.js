@@ -44,8 +44,13 @@ var NS = {
         offset: L.point(10,10),
         className: 'tooltip'
     },
-    LAT_MAGIC: 68.69,  // Magic constant for turning degree distance to miles.
-    LNG_MAGIC: 69.17   // Magic constant for turning degree distance to miles.
+    VECTOR_OPTIONS: {
+    	color: "red"
+    },
+    CONSTANTS: {
+    	LAT_MAGIC: 68.69,  // For turning degree distance to miles.
+    	LNG_MAGIC: 69.17   // For turning degree distance to miles.
+    }
 };
 
 
@@ -54,7 +59,6 @@ var LF_MAP = (function() {
     var map = L.map('leaflet_map', NS.MAP_OPTIONS);
 
     map.displayed = [];  // All icons currently on the map.
-    map.allEvents = [];  // All events
 
     map.shapes = {
         points: [],   // The current points on the map.
@@ -62,6 +66,10 @@ var LF_MAP = (function() {
         polygon: null // The current polygon on the map.
     };
     
+    /**
+     * Adds to the map and displays all the supplied events.
+     * @param events {object} An array of event object.
+     */
     map.display = function(events) {
         var bounds = []; // Used to fit map to markers.
 
@@ -103,8 +111,8 @@ var LF_MAP = (function() {
     map.filterByRadius = function(lat, lng, mi) {
     	for (var marker of this.displayed) {
     		var coords = marker.getLatLng();
-    		var a = Math.abs(lat - coords.lat) * NS.LAT_MAGIC;
-    		var b = Math.abs(lng - coords.lng) * NS.LNG_MAGIC * Math.cos(lat);
+    		var a = Math.abs(lat - coords.lat) * NS.CONSTANTS.LAT_MAGIC;
+    		var b = Math.abs(lng - coords.lng) * NS.CONSTANTS.LNG_MAGIC * Math.cos(lat);
     		var isIn = Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2)) <= mi
     			
     		isIn ? marker.addTo(this) : marker.remove();
@@ -116,46 +124,56 @@ var LF_MAP = (function() {
      * Adds a point to the map for drawing lines.
      */
     map.on('click', function(e) {
-        var pts = this.shapes.points;
+        var lastPt = this.shapes.points.length - 1;
 
         if (this.shapes.points.length) {    
-            var line = L.polyline([pts[pts.length - 1], e.latlng], 
-                {color: "red"});
+            var line = L.polyline([this.shapes.points[lastPt], e.latlng], 
+                NS.VECTOR_OPTIONS);
             line.addTo(this);
             this.shapes.lines.push(line);
         }
 
-        pts.push(e.latlng);
+        this.shapes.points.push(e.latlng);
     });
 
-
-    var insidePolygon = function(coords, lat, lng) {
-
+    /**
+     * Detects if pt is inside poly.
+     * Trying to get ray-casting algorithm to work for this.
+     * @param poly {array} an array of [lat, lng] coordinates
+     * @param pt {object} a latlng object. 
+     */
+    var insidePolygon = function(poly, pt) {
+    	
     }
 
     /*
      * Completes a polygon.
      */
     map.on('dblclick', function(e) {
+    	// Remove any current polygon
         if (this.shapes.polygon) {
             this.shapes.polygon.remove();
             this.shapes.polygon = null;
         }
 
+        // Create a new polygon if enough points have been added.
         if (this.shapes.points.length > 2) {
-            var poly = L.polygon(this.shapes.points, {color: "red"}); 
+            var poly = L.polygon(this.shapes.points, NS.VECTOR_OPTIONS); 
             this.shapes.polygon = poly;
             poly.addTo(this);
 
+            // Filter out events outside the polygon
             for (var marker of this.displayed) {
-                var coords = marker.getLatLng();
-
-                if (! insidePolygon(this.shapes.points, coords.lat, coords.lng)) {
-                    // remove marker
+                if (insidePolygon(this.shapes.points, marker.getLatLng())) {
+                    marker.addTo(this);
+                }
+                else {
+                	marker.remove();
                 }
             }
         }
         
+        // Remove all other vectors, leaving just the polygon.
         this.shapes.points = [];
         for (var line of this.shapes.lines) {
             line.remove();
@@ -167,3 +185,6 @@ var LF_MAP = (function() {
 })();
 
 LF_MAP.display(__testEvents);
+
+
+
