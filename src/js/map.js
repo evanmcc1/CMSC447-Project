@@ -29,6 +29,7 @@ var __testEvents = [
 var NS = {
     MAP_OPTIONS: {
         zoomSnap: 0,    // If 0, zoom won't snap.
+        doubleClickZoom: false,
         zoomDelta: 0.6, // Zoom will be a multiple of this.
         minZoom: 8,     // Users can't zoom out beyond this.
         layers: L.tileLayer('http://{s}.tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png') // Map style
@@ -52,10 +53,17 @@ var LF_MAP = (function() {
 
     map.displayed = [];  // All icons currently on the map.
     map.allEvents = [];  // All events
+
+    map.shapes = {
+    	points: [],   // The current points on the map.
+    	lines: [],    // The current lines on the map.
+    	polygon: null // The current polygon on the map.
+    };
     
     /**
      * Switches up all markers on the map based on filter parameters.
      * @param conditions {object} Mapping of marker field names to filter parameters.
+     * Currently handles only format (this AND this AND this AND ...)
      */
     map.filter = function(conditions) {
         var bounds = []; // Used to fit map to markers.
@@ -111,18 +119,59 @@ var LF_MAP = (function() {
         this.filter({}); // Add all markers to map.
     }
 
+
     /*
-     * Add events to the map.
+     * Adds a point to the map for drawing lines.
      */
     map.on('click', function(e) {
-    	/* Start drawing polygon?? */
-    });
-    map.on('stuff', function(e) {
+    	var pts = this.shapes.points;
 
+    	if (this.shapes.points.length) {	
+    		var line = L.polyline([pts[pts.length - 1], e.latlng], 
+    			{color: "red"});
+    		line.addTo(this);
+    		this.shapes.lines.push(line);
+    	}
+
+    	pts.push(e.latlng);
+    });
+
+
+    var insidePolygon = function(coords, x, y) {
+    	return true;
+	}
+
+	/*
+	 * Completes a polygon.
+	 */
+    map.on('dblclick', function(e) {
+    	if (this.shapes.polygon) {
+    		this.shapes.polygon.remove();
+    		this.shapes.polygon = null;
+    	}
+
+    	if (this.shapes.points.length > 2) {
+    		var poly = L.polygon(this.shapes.points, {color: "red"}); 
+			this.shapes.polygon = poly;
+			poly.addTo(this);
+
+			for (var marker of this.displayed) {
+	    		var coords = marker.getLatLng();
+
+	    		if (! insidePolygon(this.shapes.points, coords.lng, coords.lat)) {
+	    			// remove marker
+	    		}
+	    	}
+    	}
+    	
+    	this.shapes.points = [];
+    	for (var line of this.shapes.lines) {
+    		line.remove();
+    	}
+    	this.shapes.lines = [];
     });
 
     return map;
 })();
 
 LF_MAP.populate(__testEvents);
-LF_MAP.filter({ "severity": 3 });
