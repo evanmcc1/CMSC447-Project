@@ -152,3 +152,7 @@
 .idea/project.iml
 .idea/vcs.xml
 .idea/workspace.xml
+.idea/webServers.xml
+.idea/rr_php.iml
+.idea/misc.xml
+.idea/deployment.xml
