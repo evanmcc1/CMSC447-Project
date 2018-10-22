@@ -21,7 +21,7 @@ $password = "platypus";
 $dbname = "rrdb";
 
 
-if (key($_GET) == "search_by_title") {
+if (key($_POST) == "add_event") {
     // Create connection
     $conn = new mysqli($servername, $username, $password, $dbname);
     // Check connection
@@ -29,7 +29,7 @@ if (key($_GET) == "search_by_title") {
         die("Connection failed: " . $conn->connect_error);
     }
     $q = <<<EOT
-    SELECT * from event_tickets WHERE title LIKE '%{$_GET["title"]}%'
+    SELECT * from event_tickets WHERE title LIKE '%{$_POST["title"]}%'
 EOT;
     $res = $conn->query($q);
 
