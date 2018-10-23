@@ -3,20 +3,25 @@
 	background: red;
 }
 
-#leaflet_map {
+#right_half {
+	width: 40%;
+}
+
+#left_half>div, #right_half>div, #content {
 	width: 100%;
+}
+
+#leaflet_map {
 	min-width: 100px
 }
 
 #content {
-	width: 100%;
 	height: 100%;
 }
 
 #toolbar {
 	background: green;
 	height: 5%;
-	width: 100%
 }
 
 #event_feed_window {
@@ -25,8 +30,7 @@
 }
 
 #event_selector_buttons {
-	height: 5%
-	width: 100%;
+	height: 5%;
 	background: orange;
 }
 
@@ -35,6 +39,6 @@
 	background: purple;
 }
 
-button {
-	width: 20%
+#toolbar button {
+	width: 24%
 }
