@@ -1,6 +1,7 @@
 #left_half {
 	width: 60%;
 	background: red;
+	min-width: 200px;
 }
 
 #right_half {
@@ -11,10 +12,6 @@
 	width: 100%;
 }
 
-#leaflet_map {
-	min-width: 100px
-}
-
 #content {
 	height: 100%;
 }
@@ -22,6 +19,18 @@
 #toolbar {
 	background: green;
 	height: 5%;
+}
+
+.event_table tbody {
+	overflow: auto;
+}
+
+.event_table td {
+	margin: 2px;
+	padding-left: 2px;
+	box-shadow: 2px 2px 2px rgb(15,15,15);
+	-moz-box-shadow: 2px 2px 2px rgb(15,15,15);
+	-webkit-box-shadow: 2px 2px 2px rgb(15,15,15);
 }
 
 #event_feed_window {
