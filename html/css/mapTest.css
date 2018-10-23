@@ -21,7 +21,7 @@
 	height: 5%;
 }
 
-.event_table tbody {
+#event_feed_window, #grouped_events_window {
 	overflow: auto;
 }
 

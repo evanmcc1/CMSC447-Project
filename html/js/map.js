@@ -164,12 +164,39 @@ var LF_MAP = (function() {
 })();
 
 
+// Binds events related to tables
 (function() {
-	// Bind handlers to tables
+    /**
+     * Displays an event in a table row.
+     * @param id {String} ID of table to add it to.
+     * @param event {Object} Event fields.
+     */
+    var displayEvent = function(id, event) {
+        var newRow = __id(id).insertRow(-1);
+        // Adds another tr DOM element. 
+        // Sorts events maybe??
+
+        for (var value of event) {
+            newRow.insertCell(-1).appendChild(document.createTextNode(value));
+        }
+    };
+
+    //// TESTING ///////////////////////
+    for (var i = 0; i < 20; i++) {
+        displayEvent("filtered_event_feed", [i, "A name", "fire", "A comment"]);
+    }
+    ////////////////////////////////////
+
+
+    /*document.querySelector(".event_table tbody").on("click", function() {
+        // Highlight event it on map
+        // Select row so that it moves when [un]select event button is clicked
+    });*/
 })();
 
 
 var FILTER_FORM = {
+    //// TESTING ///////////////////////
 	testEvents: [
 	    {
 	        "lat":         39.123,
@@ -196,6 +223,7 @@ var FILTER_FORM = {
 	        "class":    "animal"
 	    }
 	],
+    ////////////////////////////////////
 
 	/**
      * @param parameters {?} Contains parameters to filter events on. 
@@ -208,4 +236,6 @@ var FILTER_FORM = {
     }
 };
 
+//// TESTING ///////////////////////
 LF_MAP.display(FILTER_FORM.query(null));
+////////////////////////////////////
