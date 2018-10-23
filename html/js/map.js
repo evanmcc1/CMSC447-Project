@@ -1,29 +1,8 @@
-var __testEvents = [
-    {
-        "lat":         39.123,
-        "long":     -76.824,
-        "severity": 5,
-        "class":    "fire"
-    },
-    {
-        "lat":         39.125,
-        "long":     -76.822,
-        "severity": 3,
-        "class":    "flood"
-    },
-    {
-        "lat":         39.122,
-        "long":     -76.821,
-        "severity": 2,
-        "class":    "animal"
-    },
-    {
-        "lat":         39.132,
-        "long":     -76.811,
-        "severity": 3,
-        "class":    "animal"
-    }
-];
+// Because I dont feel like typing this all the time
+// Do a mass replace of '__id' later...
+function __id(ID) {
+	return document.getElementById(ID);
+}
 
 // Namespace
 var NS = {
@@ -45,22 +24,23 @@ var NS = {
         className: 'tooltip'
     },
     VECTOR_OPTIONS: {
-    	color: "red"
+        color: "red"
     },
     CONSTANTS: {
-    	LAT_MAGIC: 68.69,  // For turning degree distance to miles.
-    	LNG_MAGIC: 69.17   // For turning degree distance to miles.
+        LAT_MAGIC: 68.69,  // For turning degree distance to miles.
+        LNG_MAGIC: 69.17   // For turning degree distance to miles.
     }
 };
 
 
-// The leaflet map
+// LEAFLET MAP OBJECT
 var LF_MAP = (function() {
     var map = L.map('leaflet_map', NS.MAP_OPTIONS);
 
-    map.displayed = [];  // All icons currently on the map.
+    __id("leaflet_map").style.height = window.innerHeight + "px";
 
-    map.shapes = {
+    map._displayed = [];  // All icons currently on the map.
+    map._shapes = {
         points: [],   // The current points on the map.
         lines: [],    // The current lines on the map.
         polygon: null // The current polygon on the map.
@@ -74,10 +54,10 @@ var LF_MAP = (function() {
         var bounds = []; // Used to fit map to markers.
 
         // Reset map
-        for (var marker of this.displayed) {
+        for (var marker of this._displayed) {
             marker.remove();
         }
-        this.displayed = [];
+        this._displayed = [];
 
         // Add the new markers
         for (var event of events) {
@@ -90,7 +70,7 @@ var LF_MAP = (function() {
                 }
             }
 
-            this.displayed.push(marker);
+            this._displayed.push(marker);
             bounds.push(marker.getLatLng())
             marker.addTo(this);
         }
@@ -109,82 +89,123 @@ var LF_MAP = (function() {
      * @param mi {number} Radius in miles.
      */
     map.filterByRadius = function(lat, lng, mi) {
-    	for (var marker of this.displayed) {
-    		var coords = marker.getLatLng();
-    		var a = Math.abs(lat - coords.lat) * NS.CONSTANTS.LAT_MAGIC;
-    		var b = Math.abs(lng - coords.lng) * NS.CONSTANTS.LNG_MAGIC * Math.cos(lat);
-    		var isIn = Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2)) <= mi
-    			
-    		isIn ? marker.addTo(this) : marker.remove();
-    	}
-    }
+        for (var marker of this._displayed) {
+            var coords = marker.getLatLng();
+            var a = Math.abs(lat - coords.lat) * NS.CONSTANTS.LAT_MAGIC;
+            var b = Math.abs(lng - coords.lng) * NS.CONSTANTS.LNG_MAGIC * Math.cos(lat);
+            var isIn = Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2)) <= mi
+                
+            isIn ? marker.addTo(this) : marker.remove();
+        }
+    };
 
 
     /*
      * Adds a point to the map for drawing lines.
      */
     map.on('click', function(e) {
-        var lastPt = this.shapes.points.length - 1;
+        var lastPt = this._shapes.points.length - 1;
 
-        if (this.shapes.points.length) {    
-            var line = L.polyline([this.shapes.points[lastPt], e.latlng], 
+        if (this._shapes.points.length) {    
+            var line = L.polyline([this._shapes.points[lastPt], e.latlng], 
                 NS.VECTOR_OPTIONS);
             line.addTo(this);
-            this.shapes.lines.push(line);
+            this._shapes.lines.push(line);
         }
 
-        this.shapes.points.push(e.latlng);
+        this._shapes.points.push(e.latlng);
     });
 
-    /**
+
+	/**
      * Detects if pt is inside poly.
      * Trying to get ray-casting algorithm to work for this.
      * @param poly {array} an array of [lat, lng] coordinates
      * @param pt {object} a latlng object. 
      */
     var insidePolygon = function(poly, pt) {
-    	
-    }
+        var x = pt.lng, y = pt.lat;
+        return true;
+    };
 
-    /*
-     * Completes a polygon.
+    /**
+     * Triggers event which completes a polygon.
      */
     map.on('dblclick', function(e) {
-    	// Remove any current polygon
-        if (this.shapes.polygon) {
-            this.shapes.polygon.remove();
-            this.shapes.polygon = null;
+        // Remove any current polygon
+        if (this._shapes.polygon) {
+            this._shapes.polygon.remove();
+            this._shapes.polygon = null;
         }
 
         // Create a new polygon if enough points have been added.
-        if (this.shapes.points.length > 2) {
-            var poly = L.polygon(this.shapes.points, NS.VECTOR_OPTIONS); 
-            this.shapes.polygon = poly;
+        if (this._shapes.points.length > 2) {
+            var poly = L.polygon(this._shapes.points, NS.VECTOR_OPTIONS); 
+            this._shapes.polygon = poly;
             poly.addTo(this);
 
-            // Filter out events outside the polygon
-            for (var marker of this.displayed) {
-                if (insidePolygon(this.shapes.points, marker.getLatLng())) {
-                    marker.addTo(this);
-                }
-                else {
-                	marker.remove();
+            // Toggle outside the polygon
+            for (var marker of this._displayed) {
+                if (insidePolygon(this._shapes.points, marker.getLatLng())) {
+                    // Toggle marker        
                 }
             }
         }
         
         // Remove all other vectors, leaving just the polygon.
-        this.shapes.points = [];
-        for (var line of this.shapes.lines) {
+        this._shapes.points = [];
+        for (var line of this._shapes.lines) {
             line.remove();
         }
-        this.shapes.lines = [];
+        this._shapes.lines = [];
     });
 
     return map;
 })();
 
-LF_MAP.display(__testEvents);
+
+(function() {
+	// Bind handlers to tables
+})();
 
 
+var FILTER_FORM = {
+	testEvents: [
+	    {
+	        "lat":         39.123,
+	        "long":     -76.824,
+	        "severity": 5,
+	        "class":    "fire"
+	    },
+	    {
+	        "lat":         39.125,
+	        "long":     -76.822,
+	        "severity": 3,
+	        "class":    "flood"
+	    },
+	    {
+	        "lat":         39.122,
+	        "long":     -76.821,
+	        "severity": 2,
+	        "class":    "animal"
+	    },
+	    {
+	        "lat":         39.132,
+	        "long":     -76.811,
+	        "severity": 3,
+	        "class":    "animal"
+	    }
+	],
 
+	/**
+     * @param parameters {?} Contains parameters to filter events on. 
+     * @return JSON object containing events from back end database. 
+     */
+    query: function(parameters) {
+    	var events = null;
+    	// Query json object from DB
+    	return this.testEvents;
+    }
+};
+
+LF_MAP.display(FILTER_FORM.query(null));

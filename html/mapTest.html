@@ -8,8 +8,48 @@
 		<link rel="stylesheet" type="text/css" href="css/mapTest.css"></link>
 	</head>
 	<body>
-		Dank map
-		<div id="leaflet_map"></div>
+		<table id="content">
+			<tbody>
+				<tr>
+					<td id="left_half">
+						<div id="leaflet_map">
+						</div>
+					</td>
+					<td id="right_half">
+						<div id="toolbar"> <!-- Navigation buttons -->
+							<button>BUTTON</button>
+							<button>BUTTON</button>
+							<button>BUTTON</button>
+							<button>BUTTON</button>
+						</div>
+						<div id="event_feed_window"> <!-- All events queried from database -->
+							<table class="event_table" id="filtered_event_feed">
+								<thead>Here's a table for the filtered events</thead>
+								<tbody>
+									<tr class="filtered_event_feed_row">
+										<td>ROW</td> <!-- These rows will be generated.-->
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<div id="event_selector_buttons">
+							<button>SELECT EVENT</button>
+							<button>UNSELECT EVENT</button>
+						</div>
+						<div id="grouped_events_window"> <!-- All events currently grouped --> 
+							<table class="event_table" id="grouped_events_table">
+								<thead>Here's a table for the grouped events</thead>
+								<tbody> 
+									<tr class="grouped_events_table_row">
+										<td>ROW</td> <!-- These rows will be generated.-->
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</td>
+				</tr>
+			</tbody>
+		</table>
 		<script type="text/javascript" src="js/map.js"></script>
 	</body>
 </html>
