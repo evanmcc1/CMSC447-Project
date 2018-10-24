@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <title>Map test</title>
+    <link rel="stylesheet" type="text/css" href="leaflet/leaflet.css"></link>
+    <script type="text/javascript" src="leaflet/leaflet.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/mapInterface.css"></link>
+  </head>
+  <body>
+    <table id="content"><tbody><tr>
+      <td id="left_half">
+        <div id="leaflet_map"></div>
+      </td>
+      <td id="right_half">
+        <div id="toolbar"> <!-- Navigation buttons -->
+          <button>Filter</button>
+          <button>OC</button>
+          <button>Ticket form</button>
+          <button>Logout</button>
+        </div>
+        <div id="event_feed_window"> <!-- All events queried from database -->
+          <table class="event_table" id="filtered_event_feed">
+            <thead>
+              <tr>Event feed</tr>
+              <tr>
+                <td>Status</td>
+                <td>Recieved</td>
+                <td>Name</td>
+                <td>Class</td>
+              </tr>
+            </thead>
+            <tbody><!-- Events listed here --></tbody>
+          </table>
+        </div>
+        <div id="grouped_events_window"> <!-- All events currently grouped --> 
+          <table class="event_table" id="grouped_events_table">
+            <thead>
+              <tr>Grouped</tr>
+              <tr>
+                <td>Status</td>
+                <td>Recieved</td>
+                <td>Name</td>
+                <td>Class</td>
+              </tr>
+            </thead>
+            <tbody><!-- Events listed here --></tbody>
+          </table>
+        </div>
+      </td>
+    </tr></tbody></table>
+    <script type="text/javascript" src="js/mapInterface.js"></script>
+  </body>
+</html>

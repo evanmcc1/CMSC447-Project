@@ -173,16 +173,16 @@ var LF_MAP = (function() {
 
 
 // Represents a the state of a table of events.
-// TABLE is the table DOM element.
+// TABLE is a table DOM element.
 function EventTable(TABLE) {
     this.addRow = function(row) {
         TABLE.appendChild(row);
     }
 
-    this.removeRow = function(oldRow) {
-        if (TABLE.contains(oldRow)) {
-            oldRow.remove();
-            return oldRow;
+    this.removeRow = function(row) {
+        if (TABLE.contains(row)) {
+            row.remove();
+            return row;
         }
         return null;
     };
@@ -208,6 +208,7 @@ function EventTable(TABLE) {
         }
     };
 }
+
 var EVENT_FEED = new EventTable(document.getElementById("filtered_event_feed"));
 var GROUPED_EVENTS = new EventTable(document.getElementById("grouped_events_table"));
 
@@ -223,10 +224,7 @@ var GROUPED_EVENTS = new EventTable(document.getElementById("grouped_events_tabl
 var DATA_HANDLER = {
     selected: null,
 
-    /**
-     * @param parameters {?} Contains parameters to filter events on. 
-     * @return JSON object containing events from back end database. 
-     */
+    // Queries data from the DB and then displays them on the page. 
     query: function(parameters) {
         // Query json object from DB
         LF_MAP.displayAll(parameters);
@@ -286,7 +284,7 @@ DATA_HANDLER.query([{
     "id":123, 
     "name":123, 
     "class":"fire",
-    "recieved": "now", 
+    "recieved": "date", 
     "lat": 39.123, 
     "long": -76.824, 
     "desc": "description of event."
