@@ -1,9 +1,3 @@
-// Because I dont feel like typing this all the time
-// Do a mass replace of '__id' later...
-function __id(ID) {
-	return document.getElementById(ID);
-}
-
 // Namespace
 var NS = {
     MAP_OPTIONS: {
@@ -37,59 +31,82 @@ var NS = {
 var LF_MAP = (function() {
     var map = L.map('leaflet_map', NS.MAP_OPTIONS);
 
-    __id("leaflet_map").style.height = window.innerHeight + "px";
+    document.getElementById("leaflet_map")
+        .style.height = window.innerHeight + "px";
 
-    map._displayed = [];  // All icons currently on the map.
-    map._shapes = {
+    map.displayed = [];  // All icons currently on the map.
+
+    map.selected = null;
+    
+    map.shapes = {
         points: [],   // The current points on the map.
         lines: [],    // The current lines on the map.
         polygon: null // The current polygon on the map.
     };
     
-    /**
-     * Adds to the map and displays all the supplied events.
-     * @param events {object} An array of event object.
-     */
-    map.display = function(events) {
-        var bounds = []; // Used to fit map to markers.
-
-        // Reset map
-        for (var marker of this._displayed) {
+    // Removes all icons from the map
+    map.clear = function() {
+        for (var marker of this.displayed) {
             marker.remove();
         }
-        this._displayed = [];
+        this.displayed = [];
+    };
+
+    // Returns marker displayd on map with the given id.
+    map.getMarker = function(eventId) {
+        for (var marker of this.displayed) {
+            if (marker.id == eventId) {
+                return marker;
+            }
+        }
+        return null;
+    }
+
+    // Opens tooltip of marker with eventId
+    map.describeEvent = function(eventId) {
+        this.selected && this.selected.closeTooltip();
+        var marker = this.getMarker(eventId);
+        marker.openTooltip();
+        this.selected = marker
+        return !!marker;
+    };
+
+    // Marks or unmarks a marker as having been grouped.
+    map.markSelected = function(eventId, isSelected) {
+        var marker = this.getMarker(eventId);
+
+        isSelected ? alert("Marker on map is now selected!") 
+            : alert("Marker on map is now unselected!");
+    };
+
+    // Displays an event on the map. Event is a JSON event object.
+    map.displayEvent = function(event) {
+        var marker = L.marker([event['lat'], event['long']]);
+        marker.id = event.id;
+        this.displayed.push(marker);
+        marker.bindTooltip(event["desc"], NS.TOOLTIP_OPTIONS);
+        marker.addTo(this);
+    };
+
+    // Adds to the map and displays all the supplied events.
+    // Events is an array of JSON event object.
+    map.displayAll = function(events) {
+        var bounds = []; // Used to fit map to markers.
+        this.clear();
 
         // Add the new markers
         for (var event of events) {
-            var marker = L.marker([event['lat'], event['long']]);
-            
-            for (var field of Object.keys(event)) {
-                if (field != "lat" && field != "long") {
-                    // Puts ALL fields in marker. Maybe not necessary to do all?
-                    marker[field] = event[field];
-                }
-            }
-
-            this._displayed.push(marker);
-            bounds.push(marker.getLatLng())
-            marker.addTo(this);
+            this.displayEvent(event);
+            bounds.push([event["lat"], event["long"]])
         }
 
         // Fit the view to the scope of the markers
-        if (bounds.length) {
-            this.fitBounds(bounds, NS.MAP_AUTOPAN_OPTIONS);
-        }
+        bounds.length && this.fitBounds(bounds, NS.MAP_AUTOPAN_OPTIONS);
     };
 
-
-    /**
-     * Displays only markers withing r degrees of lat and lng.
-     * @param lat {number} Latitude.
-     * @param lng {number} Longitude.
-     * @param mi {number} Radius in miles.
-     */
+    // Displays only markers withing mi miles of lat and lng.
     map.filterByRadius = function(lat, lng, mi) {
-        for (var marker of this._displayed) {
+        for (var marker of this.displayed) {
             var coords = marker.getLatLng();
             var a = Math.abs(lat - coords.lat) * NS.CONSTANTS.LAT_MAGIC;
             var b = Math.abs(lng - coords.lng) * NS.CONSTANTS.LNG_MAGIC * Math.cos(lat);
@@ -99,143 +116,179 @@ var LF_MAP = (function() {
         }
     };
 
-
-    /*
-     * Adds a point to the map for drawing lines.
-     */
+    // Adds a point to the map for drawing lines.
     map.on('click', function(e) {
-        var lastPt = this._shapes.points.length - 1;
+        var lastPt = this.shapes.points.length - 1;
 
-        if (this._shapes.points.length) {    
-            var line = L.polyline([this._shapes.points[lastPt], e.latlng], 
+        if (this.shapes.points.length) {    
+            var line = L.polyline([this.shapes.points[lastPt], e.latlng], 
                 NS.VECTOR_OPTIONS);
             line.addTo(this);
-            this._shapes.lines.push(line);
+            this.shapes.lines.push(line);
         }
 
-        this._shapes.points.push(e.latlng);
+        this.shapes.points.push(e.latlng);
     });
 
-
-	/**
-     * Detects if pt is inside poly.
-     * Trying to get ray-casting algorithm to work for this.
-     * @param poly {array} an array of [lat, lng] coordinates
-     * @param pt {object} a latlng object. 
-     */
+    // Detects if pt is inside poly. 
+    // Pt is a [lat, lng pair]. Poly is an array of [lat, lng] pairs 
     var insidePolygon = function(poly, pt) {
         var x = pt.lng, y = pt.lat;
         return true;
     };
 
-    /**
-     * Triggers event which completes a polygon.
-     */
+    // Triggers event which completes a polygon.
     map.on('dblclick', function(e) {
         // Remove any current polygon
-        if (this._shapes.polygon) {
-            this._shapes.polygon.remove();
-            this._shapes.polygon = null;
+        if (this.shapes.polygon) {
+            this.shapes.polygon.remove();
+            this.shapes.polygon = null;
         }
 
         // Create a new polygon if enough points have been added.
-        if (this._shapes.points.length > 2) {
-            var poly = L.polygon(this._shapes.points, NS.VECTOR_OPTIONS); 
-            this._shapes.polygon = poly;
+        if (this.shapes.points.length > 2) {
+            var poly = L.polygon(this.shapes.points, NS.VECTOR_OPTIONS); 
+            this.shapes.polygon = poly;
             poly.addTo(this);
 
             // Toggle outside the polygon
-            for (var marker of this._displayed) {
-                if (insidePolygon(this._shapes.points, marker.getLatLng())) {
+            for (var marker of this.displayed) {
+                if (insidePolygon(this.shapes.points, marker.getLatLng())) {
                     // Toggle marker        
                 }
             }
         }
         
         // Remove all other vectors, leaving just the polygon.
-        this._shapes.points = [];
-        for (var line of this._shapes.lines) {
+        this.shapes.points = [];
+        for (var line of this.shapes.lines) {
             line.remove();
         }
-        this._shapes.lines = [];
+        this.shapes.lines = [];
     });
 
     return map;
 })();
 
 
-// Binds events related to tables
-(function() {
-    /**
-     * Displays an event in a table row.
-     * @param id {String} ID of table to add it to.
-     * @param event {Object} Event fields.
-     */
-    var displayEvent = function(id, event) {
-        var newRow = __id(id).insertRow(-1);
-        // Adds another tr DOM element. 
-        // Sorts events maybe??
 
-        for (var value of event) {
-            newRow.insertCell(-1).appendChild(document.createTextNode(value));
+// Represents a the state of a table of events.
+// TABLE is the table DOM element.
+function EventTable(TABLE) {
+    this.addRow = function(row) {
+        TABLE.appendChild(row);
+    }
+
+    this.removeRow = function(oldRow) {
+        if (TABLE.contains(oldRow)) {
+            oldRow.remove();
+            return oldRow;
         }
+        return null;
     };
 
-    //// TESTING ///////////////////////
-    for (var i = 0; i < 20; i++) {
-        displayEvent("filtered_event_feed", [i, "A name", "fire", "A comment"]);
-    }
-    ////////////////////////////////////
+    // Displays an event JSON object in a table row.
+    this.displayEvent = function(event) {
+        var newRow = TABLE.insertRow(-1);
+        newRow.id = event["id"];
+
+        for (var key of ["name", "class", "recieved"]) {
+            newRow.insertCell(-1)
+                .appendChild(document.createTextNode(event[key]));
+        }
+
+        newRow.insertCell(0)
+            .appendChild(document.createTextNode("Unres."));
+    };
+
+    // Displays all events in the events array of JSON objects.
+    this.displayAll = function(events) {
+        for (var event of events) {
+            this.displayEvent(event);
+        }
+    };
+}
+var EVENT_FEED = new EventTable(document.getElementById("filtered_event_feed"));
+var GROUPED_EVENTS = new EventTable(document.getElementById("grouped_events_table"));
 
 
-    /*document.querySelector(".event_table tbody").on("click", function() {
-        // Highlight event it on map
-        // Select row so that it moves when [un]select event button is clicked
-    });*/
-})();
 
+/**
+ * Since the map and table both hold events, but each cares only about certain
+ * kinds of event information, the DATA_HANDLER is responsible for keeping them 
+ * synchronized. Each handler on the page which affets events should invoke a
+ * method of EVENT_HANDLER. The event handler will deal with the map and tables.
+ * The DATA_HANDLER is the middleman between the user and the map/table.
+ */
+var DATA_HANDLER = {
+    selected: null,
 
-var FILTER_FORM = {
-    //// TESTING ///////////////////////
-	testEvents: [
-	    {
-	        "lat":         39.123,
-	        "long":     -76.824,
-	        "severity": 5,
-	        "class":    "fire"
-	    },
-	    {
-	        "lat":         39.125,
-	        "long":     -76.822,
-	        "severity": 3,
-	        "class":    "flood"
-	    },
-	    {
-	        "lat":         39.122,
-	        "long":     -76.821,
-	        "severity": 2,
-	        "class":    "animal"
-	    },
-	    {
-	        "lat":         39.132,
-	        "long":     -76.811,
-	        "severity": 3,
-	        "class":    "animal"
-	    }
-	],
-    ////////////////////////////////////
-
-	/**
+    /**
      * @param parameters {?} Contains parameters to filter events on. 
      * @return JSON object containing events from back end database. 
      */
     query: function(parameters) {
-    	var events = null;
-    	// Query json object from DB
-    	return this.testEvents;
+        // Query json object from DB
+        LF_MAP.displayAll(parameters);
+        EVENT_FEED.displayAll(parameters);
+    },
+
+    // Marks event as selected, opens tooltip, highlights row.
+    select: function(row) {
+        LF_MAP.describeEvent(row.id);
+        if (this.selected) {
+            this.selected.style["background-color"] = "blue";
+        }
+        this.selected = row;
+        this.selected.style["background-color"] = "red";
+    },
+
+    // Moves the event from its event table to the other 
+    migrate: function(row) {
+        if (EVENT_FEED.removeRow(row)) {
+            GROUPED_EVENTS.addRow(row);
+            LF_MAP.markSelected(row.id, true);
+        }
+        else {
+            GROUPED_EVENTS.removeRow(row);
+            EVENT_FEED.addRow(row);
+            LF_MAP.markSelected(row.id, false);
+        }
     }
 };
 
+
+
+/*
+ * Adds listener to table so that when a row is clicked, stuff happens
+ * Event target should be the cell, so parentNode is the row.
+ * depending on event ID in that row
+ */
+(function() {
+    var select = function(e) {
+        DATA_HANDLER.select(e.target.parentNode);
+    };
+    var migrate = function(e) {
+        DATA_HANDLER.migrate(e.target.parentNode);
+    };
+
+    for (var tbl of ["filtered_event_feed", "grouped_events_table"]) {
+        var obj = document.getElementById(tbl);
+        obj.addEventListener('dblclick', migrate);
+        obj.addEventListener('click', select);
+    }
+})();
+
+
+
 //// TESTING ///////////////////////
-LF_MAP.display(FILTER_FORM.query(null));
+DATA_HANDLER.query([{
+    "id":123, 
+    "name":123, 
+    "class":"fire",
+    "recieved": "now", 
+    "lat": 39.123, 
+    "long": -76.824, 
+    "desc": "description of event."
+}]);
 ////////////////////////////////////

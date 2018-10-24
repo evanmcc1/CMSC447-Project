@@ -17,39 +17,35 @@
           </td>
           <td id="right_half">
             <div id="toolbar"> <!-- Navigation buttons -->
+              <button>Filter</button>
               <button>BUTTON</button>
-              <button>BUTTON</button>
-              <button>BUTTON</button>
-              <button>BUTTON</button>
+              <button>Ticket form</button>
+              <button>Logout</button>
             </div>
             <div id="event_feed_window"> <!-- All events queried from database -->
               <table class="event_table" id="filtered_event_feed">
                 <thead>
                   <tr>Event feed</tr>
                   <tr>
-                    <td>ID</td>
+                    <td>Status</td>
+                    <td>Recieved</td>
                     <td>Name</td>
                     <td>Class</td>
-                    <td>Description</td>
                   </tr>
                 </thead>
                 <tbody>
                 </tbody>
               </table>
             </div>
-            <div id="event_selector_buttons">
-              <button>SELECT EVENT</button>
-              <button>UNSELECT EVENT</button>
-            </div>
             <div id="grouped_events_window"> <!-- All events currently grouped --> 
               <table class="event_table" id="grouped_events_table">
                 <thead>
-                <tr>Grouped</tr>
-                <tr>
-                    <td>ID</td>
+                  <tr>Grouped</tr>
+                  <tr>
+                    <td>Status</td>
+                    <td>Recieved</td>
                     <td>Name</td>
                     <td>Class</td>
-                    <td>Description</td>
                   </tr>
                 </thead>
                 <tbody>
