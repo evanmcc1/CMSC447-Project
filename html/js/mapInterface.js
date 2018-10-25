@@ -306,6 +306,6 @@ DATA_HANDLER.query([
     "recieved": "date", 
     "lat": 39.111, 
     "long": -76.828, 
-    "desc": "Mary Jane captured by Lex Luther."
+    "desc": "Lois Lane captured by Lex Luther."
 }]);
 ////////////////////////////////////
