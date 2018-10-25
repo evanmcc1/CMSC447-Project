@@ -10,21 +10,8 @@
 	height: 100%;
 }
 
-#toolbar {
-	background: green;
-	height: 5%;
-}
-
 #event_feed_window, #grouped_events_window {
 	overflow: auto;
-}
-
-.event_table td {
-	margin: 2px;
-	padding-left: 2px;
-	box-shadow: 2px 2px 2px rgb(15,15,15);
-	-moz-box-shadow: 2px 2px 2px rgb(15,15,15);
-	-webkit-box-shadow: 2px 2px 2px rgb(15,15,15);
 }
 
 #event_feed_window {
@@ -35,8 +22,4 @@
 #grouped_events_window {
 	height: 35%;
 	background: purple;
-}
-
-#toolbar button {
-	width: 24%
 }
