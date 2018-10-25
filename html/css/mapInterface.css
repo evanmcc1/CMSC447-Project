@@ -1,0 +1,25 @@
+#left_half {
+	width: 60%;
+}
+
+#left_half>div, #right_half>div, #content {
+	width: 100%;
+}
+
+#content {
+	height: 100%;
+}
+
+#event_feed_window, #grouped_events_window {
+	overflow: auto;
+}
+
+#event_feed_window {
+	height: 60%;
+	background: blue;
+}
+
+#grouped_events_window {
+	height: 35%;
+	background: purple;
+}

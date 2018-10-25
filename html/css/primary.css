@@ -1,0 +1,21 @@
+/*
+ * Styles which are likely to be relevant every page.
+ */
+
+#toolbar button {
+	width: 24%;
+}
+
+#toolbar {
+	height: 5%;
+	background: green;
+}
+
+.event_table td {
+	margin: 2px;
+	padding-left: 2px;
+	box-shadow: 2px 2px 2px rgb(15,15,15);
+	-moz-box-shadow: 2px 2px 2px rgb(15,15,15);
+	-webkit-box-shadow: 2px 2px 2px rgb(15,15,15);
+}
+
