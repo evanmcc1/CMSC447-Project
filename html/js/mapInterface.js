@@ -20,6 +20,18 @@ var NS = {
     VECTOR_OPTIONS: {
         color: "red"
     },
+    TABULAR_OPTIONS: {
+		layout:"fitColumns",
+		columns:[
+			{title:"Id", field:"id"},
+			{title:"Name", field:"name"},
+		 	{title:"Class", field:"class"},
+		 	{title:"Recieved", field:"recieved"}
+		],
+		rowClick:function(e, row){ //trigger an alert message when the row is clicked
+	 		DATA_HANDLER.migrate(row);
+	 	},
+	},
     CONST: {
         LAT_MAGIC: 68.69,  // For turning degree distance to miles.
         LNG_MAGIC: 69.17,  // For turning degree distance to miles.
@@ -37,12 +49,12 @@ var LF_MAP = (function() {
 
     map.displayed = [];  // All icons currently on the map.
 
-    map.selected = null;
+    map.selected = null; // Used to close tooltip of event last focused on.
     
     map.shapes = {
         points: [],   // The current points on the map.
         lines: [],    // The current lines on the map.
-        polygon: null // The current polygons on the map.
+        polygon: null // The current polygon on the map.
     };
     
     // Removes all icons from the map
@@ -84,26 +96,27 @@ var LF_MAP = (function() {
     // Displays an event on the map. Event is a JSON event object.
     // Gives the marker a circle so that it will display when marker
     // is selected. 
-    map.displayEvent = function(event) {
+    map.addEvent = function(event) {
         var marker = L.marker([event['lat'], event['long']]);
         marker.id = event.id;
         marker.circle = L.circle(marker.getLatLng(), 
                                 (event['rad'] * NS.CONST.TO_M_MAGIC), 
                                 NS.VECTOR_OPTIONS);
-        this.displayed.push(marker);
         marker.bindTooltip(event['desc'], NS.TOOLTIP_OPTIONS);
+        this.displayed.push(marker);
         marker.addTo(this);
     };
 
     // Adds to the map and displays all the supplied events.
     // Events is an array of JSON event object.
-    map.displayAll = function(events) {
+    // This also fits map around the events. addEvent does not.
+    map.addAllEvents = function(events) {
         var bounds = []; // Used to fit map to markers.
         this.clear();
 
         // Add the new markers
         for (var event of events) {
-            this.displayEvent(event);
+            this.addEvent(event);
             bounds.push([event["lat"], event["long"]])
         }
 
@@ -178,50 +191,14 @@ var LF_MAP = (function() {
 })();
 
 
+var EVENT_FEED = new Tabulator("#filtered_event_feed", NS.TABULAR_OPTIONS);
+var GROUPED_EVENTS = new Tabulator("#grouped_events_table", NS.TABULAR_OPTIONS);
 
-// Represents a the state of a table of events.
-// TABLE is a table DOM element.
-function EventTable(TABLE, FIELDS) {
-    this.addRow = function(row) {
-        TABLE.tBodies[0].appendChild(row);
-    }
-
-    this.removeRow = function(row) {
-        var exists = TABLE.contains(row);
-        exists && row.remove();
-        return (exists ? row : null);
-    };
-
-    // Displays an event JSON object in a table row.
-    this.displayEvent = function(event) {
-        var newRow = document.createElement("tr");
-        newRow.id = event["id"];
-
-        for (var key of FIELDS) {
-            var text = document.createTextNode(event[key]);
-            newRow.insertCell(-1).appendChild(text);
-        }
-
-        var text = document.createTextNode("Unres.");
-        newRow.insertCell(0).appendChild(text);
-
-        TABLE.tBodies[0].appendChild(newRow);
-    };
-
-    // Displays all events in the events array of JSON objects.
-    this.displayAll = function(events) {
-        for (var event of events) {
-            this.displayEvent(event);
-        }
-    };
+for (var table of document.getElementsByClassName("tabulator-table")) {
+	table.addEventListener('mouseover', function(e) {
+		DATA_HANDLER.select(e.target.parentNode);
+	})
 }
-
-var EVENT_FEED = new EventTable(document.getElementById("filtered_event_feed"), 
-                                    ["name", "class", "recieved"]);
-var GROUPED_EVENTS = new EventTable(document.getElementById("grouped_events_table"), 
-                                    ["name", "class", "recieved"]);
-
-
 
 /**
  * Since the map and table both hold events, but each cares only about certain
@@ -236,58 +213,29 @@ var DATA_HANDLER = {
     // Queries data from the DB and then displays them on the page. 
     query: function(parameters) {
         // Query json object from DB
-        LF_MAP.displayAll(parameters);
-        EVENT_FEED.displayAll(parameters);
+        LF_MAP.addAllEvents(parameters);
+        EVENT_FEED.setData(parameters);
     },
 
     // Marks event as selected, opens tooltip, highlights row.
     select: function(row) {
-        if (this.selected) {
-            this.selected.style["background-color"] = "blue";
-        }
-        this.selected = row;
-        LF_MAP.describeEvent(row.id);
-        row.style["background-color"] = "red";
+        LF_MAP.describeEvent(row.firstChild.textContent);
     },
 
     // Moves the event from its event table to the other 
     migrate: function(row) {
-        if (EVENT_FEED.removeRow(row)) {
-            GROUPED_EVENTS.addRow(row);
-            LF_MAP.markSelected(row.id, true);
+        if (EVENT_FEED.getRowPosition(row) > -1) {
+        	row.delete();
+            GROUPED_EVENTS.addRow(row.getData());
+            LF_MAP.markSelected(row._row.data.id, true); // Shouldnt be accessing this??
         }
-        else if (GROUPED_EVENTS.removeRow(row)) {
-            EVENT_FEED.addRow(row);
-            LF_MAP.markSelected(row.id, false);
+        else if (GROUPED_EVENTS.getRowPosition(row) > -1) {
+        	row.delete();
+        	EVENT_FEED.addRow(row.getData());
+            LF_MAP.markSelected(row._row.data.id, false);
         }
     }
 };
-
-
-
-/*
- * Adds listener to table so that when a row is clicked, stuff happens
- * Event target should be the cell, so parentNode is the row.
- * depending on event ID in that row
- */
-(function() {
-    var handler = function(e, func) {
-    	// Ensures function is called on a table row in the table body.
-    	var row = e.target.parentNode;
-        (row.parentNode.tagName == "TBODY") && func(row);
-    };
-
-    for (var tbl of ["filtered_event_feed", "grouped_events_table"]) {
-        var obj = document.getElementById(tbl);
-
-        obj.addEventListener('click', function(e) {
-        	handler(e, DATA_HANDLER.migrate);
-        });
-        obj.addEventListener('mouseover', function(e) {
-        	handler(e, DATA_HANDLER.select);
-        });
-    }
-})();
 
 
 

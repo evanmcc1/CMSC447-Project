@@ -10,16 +10,10 @@
 	height: 100%;
 }
 
-#event_feed_window, #grouped_events_window {
-	overflow: auto;
+#filtered_event_feed {
+	height: 50%;
 }
 
-#event_feed_window {
-	height: 60%;
-	background: blue;
-}
-
-#grouped_events_window {
+#grouped_events_table {
 	height: 35%;
-	background: purple;
 }
