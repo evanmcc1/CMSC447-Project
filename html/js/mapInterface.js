@@ -74,9 +74,6 @@ var LF_MAP = (function() {
     // Marks or unmarks a marker as having been grouped.
     map.markSelected = function(eventId, isSelected) {
         var marker = this.getMarker(eventId);
-
-        isSelected ? alert("Marker on map is now selected!") 
-            : alert("Marker on map is now unselected!");
     };
 
     // Displays an event on the map. Event is a JSON event object.
@@ -176,29 +173,29 @@ var LF_MAP = (function() {
 // TABLE is a table DOM element.
 function EventTable(TABLE) {
     this.addRow = function(row) {
-        TABLE.appendChild(row);
+        TABLE.tBodies[0].appendChild(row);
     }
 
     this.removeRow = function(row) {
-        if (TABLE.contains(row)) {
-            row.remove();
-            return row;
-        }
-        return null;
+        var exists = TABLE.contains(row);
+        exists && row.remove();
+        return (exists ? row : null);
     };
 
     // Displays an event JSON object in a table row.
     this.displayEvent = function(event) {
-        var newRow = TABLE.insertRow(-1);
+        var newRow = document.createElement("tr");
         newRow.id = event["id"];
 
         for (var key of ["name", "class", "recieved"]) {
-            newRow.insertCell(-1)
-                .appendChild(document.createTextNode(event[key]));
+            var text = document.createTextNode(event[key]);
+            newRow.insertCell(-1).appendChild(text);
         }
 
-        newRow.insertCell(0)
-            .appendChild(document.createTextNode("Unres."));
+        var text = document.createTextNode("Unres.");
+        newRow.insertCell(0).appendChild(text);
+
+        TABLE.tBodies[0].appendChild(newRow);
     };
 
     // Displays all events in the events array of JSON objects.
@@ -233,12 +230,12 @@ var DATA_HANDLER = {
 
     // Marks event as selected, opens tooltip, highlights row.
     select: function(row) {
-        LF_MAP.describeEvent(row.id);
         if (this.selected) {
             this.selected.style["background-color"] = "blue";
         }
-        row.style["background-color"] = "red";
         this.selected = row;
+        LF_MAP.describeEvent(row.id);
+        row.style["background-color"] = "red";
     },
 
     // Moves the event from its event table to the other 
@@ -247,8 +244,7 @@ var DATA_HANDLER = {
             GROUPED_EVENTS.addRow(row);
             LF_MAP.markSelected(row.id, true);
         }
-        else {
-            GROUPED_EVENTS.removeRow(row);
+        else if (GROUPED_EVENTS.removeRow(row)) {
             EVENT_FEED.addRow(row);
             LF_MAP.markSelected(row.id, false);
         }
@@ -263,17 +259,21 @@ var DATA_HANDLER = {
  * depending on event ID in that row
  */
 (function() {
-    var select = function(e) {
-        DATA_HANDLER.select(e.target.parentNode);
-    };
-    var migrate = function(e) {
-        DATA_HANDLER.migrate(e.target.parentNode);
+    var handler = function(e, func) {
+    	// Ensures function is called on a table row in the table body.
+    	var row = e.target.parentNode;
+        (row.parentNode.tagName == "TBODY") && func(row);
     };
 
     for (var tbl of ["filtered_event_feed", "grouped_events_table"]) {
         var obj = document.getElementById(tbl);
-        obj.addEventListener('click', migrate);
-        obj.addEventListener('mouseover', select);
+
+        obj.addEventListener('click', function(e) {
+        	handler(e, DATA_HANDLER.migrate);
+        });
+        obj.addEventListener('mouseover', function(e) {
+        	handler(e, DATA_HANDLER.select);
+        });
     }
 })();
 
