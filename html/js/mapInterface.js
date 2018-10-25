@@ -237,8 +237,8 @@ var DATA_HANDLER = {
         if (this.selected) {
             this.selected.style["background-color"] = "blue";
         }
+        row.style["background-color"] = "red";
         this.selected = row;
-        this.selected.style["background-color"] = "red";
     },
 
     // Moves the event from its event table to the other 
@@ -272,15 +272,16 @@ var DATA_HANDLER = {
 
     for (var tbl of ["filtered_event_feed", "grouped_events_table"]) {
         var obj = document.getElementById(tbl);
-        obj.addEventListener('dblclick', migrate);
-        obj.addEventListener('click', select);
+        obj.addEventListener('click', migrate);
+        obj.addEventListener('mouseover', select);
     }
 })();
 
 
 
 //// TESTING ///////////////////////
-DATA_HANDLER.query([{
+DATA_HANDLER.query([
+{
     "id":123, 
     "name":123, 
     "class":"fire",
@@ -288,5 +289,23 @@ DATA_HANDLER.query([{
     "lat": 39.123, 
     "long": -76.824, 
     "desc": "description of event."
+},
+{
+    "id":124, 
+    "name":124, 
+    "class":"cat",
+    "recieved": "recently", 
+    "lat": 39.131, 
+    "long": -76.842, 
+    "desc": "cat on fire."
+},
+{
+    "id":125, 
+    "name":125, 
+    "class":"superman",
+    "recieved": "date", 
+    "lat": 39.111, 
+    "long": -76.828, 
+    "desc": "Mary Jane captured by Lex Luther."
 }]);
 ////////////////////////////////////
