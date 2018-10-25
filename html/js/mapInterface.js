@@ -20,9 +20,10 @@ var NS = {
     VECTOR_OPTIONS: {
         color: "red"
     },
-    CONSTANTS: {
+    CONST: {
         LAT_MAGIC: 68.69,  // For turning degree distance to miles.
-        LNG_MAGIC: 69.17   // For turning degree distance to miles.
+        LNG_MAGIC: 69.17,  // For turning degree distance to miles.
+        TO_M_MAGIC: 1609.34 // For converting miles to meters. 
     }
 };
 
@@ -41,7 +42,7 @@ var LF_MAP = (function() {
     map.shapes = {
         points: [],   // The current points on the map.
         lines: [],    // The current lines on the map.
-        polygon: null // The current polygon on the map.
+        polygon: null // The current polygons on the map.
     };
     
     // Removes all icons from the map
@@ -74,14 +75,23 @@ var LF_MAP = (function() {
     // Marks or unmarks a marker as having been grouped.
     map.markSelected = function(eventId, isSelected) {
         var marker = this.getMarker(eventId);
+
+        if (marker) {
+            isSelected ? marker.circle.addTo(this) : marker.circle.remove();
+        }
     };
 
     // Displays an event on the map. Event is a JSON event object.
+    // Gives the marker a circle so that it will display when marker
+    // is selected. 
     map.displayEvent = function(event) {
         var marker = L.marker([event['lat'], event['long']]);
         marker.id = event.id;
+        marker.circle = L.circle(marker.getLatLng(), 
+                                (event['rad'] * NS.CONST.TO_M_MAGIC), 
+                                NS.VECTOR_OPTIONS);
         this.displayed.push(marker);
-        marker.bindTooltip(event["desc"], NS.TOOLTIP_OPTIONS);
+        marker.bindTooltip(event['desc'], NS.TOOLTIP_OPTIONS);
         marker.addTo(this);
     };
 
@@ -105,8 +115,8 @@ var LF_MAP = (function() {
     map.filterByRadius = function(lat, lng, mi) {
         for (var marker of this.displayed) {
             var coords = marker.getLatLng();
-            var a = Math.abs(lat - coords.lat) * NS.CONSTANTS.LAT_MAGIC;
-            var b = Math.abs(lng - coords.lng) * NS.CONSTANTS.LNG_MAGIC * Math.cos(lat);
+            var a = Math.abs(lat - coords.lat) * NS.CONST.LAT_MAGIC;
+            var b = Math.abs(lng - coords.lng) * NS.CONST.LNG_MAGIC * Math.cos(lat);
             var isIn = Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2)) <= mi
                 
             isIn ? marker.addTo(this) : marker.remove();
@@ -171,7 +181,7 @@ var LF_MAP = (function() {
 
 // Represents a the state of a table of events.
 // TABLE is a table DOM element.
-function EventTable(TABLE) {
+function EventTable(TABLE, FIELDS) {
     this.addRow = function(row) {
         TABLE.tBodies[0].appendChild(row);
     }
@@ -187,7 +197,7 @@ function EventTable(TABLE) {
         var newRow = document.createElement("tr");
         newRow.id = event["id"];
 
-        for (var key of ["name", "class", "recieved"]) {
+        for (var key of FIELDS) {
             var text = document.createTextNode(event[key]);
             newRow.insertCell(-1).appendChild(text);
         }
@@ -206,8 +216,10 @@ function EventTable(TABLE) {
     };
 }
 
-var EVENT_FEED = new EventTable(document.getElementById("filtered_event_feed"));
-var GROUPED_EVENTS = new EventTable(document.getElementById("grouped_events_table"));
+var EVENT_FEED = new EventTable(document.getElementById("filtered_event_feed"), 
+                                    ["name", "class", "recieved"]);
+var GROUPED_EVENTS = new EventTable(document.getElementById("grouped_events_table"), 
+                                    ["name", "class", "recieved"]);
 
 
 
@@ -285,7 +297,8 @@ DATA_HANDLER.query([
     "id":123, 
     "name":123, 
     "class":"fire",
-    "recieved": "date", 
+    "recieved": "date",
+    "rad": 0.2, 
     "lat": 39.123, 
     "long": -76.824, 
     "desc": "description of event."
@@ -295,6 +308,7 @@ DATA_HANDLER.query([
     "name":124, 
     "class":"cat",
     "recieved": "recently", 
+    "rad": 0.3,
     "lat": 39.131, 
     "long": -76.842, 
     "desc": "cat on fire."
@@ -304,6 +318,7 @@ DATA_HANDLER.query([
     "name":125, 
     "class":"superman",
     "recieved": "date", 
+    "rad": 0.4,
     "lat": 39.111, 
     "long": -76.828, 
     "desc": "Lois Lane captured by Lex Luther."
