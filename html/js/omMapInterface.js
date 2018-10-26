@@ -7,16 +7,16 @@
 var OM_DATA_HANDLER = (function() {
 
     var OM_TABULAR_OPTIONS = {
-        layout:"fitColumns",
-        columns:[
+        layout: "fitColumns",
+        columns: [
             {title:"Id", field:"id"},
             {title:"Name", field:"name"},
-             {title:"Class", field:"class"},
-             {title:"Recieved", field:"recieved"}
+            {title:"Class", field:"class"},
+            {title:"Recieved", field:"recieved"}
         ],
-        rowClick:function(e, row){ //trigger an alert message when the row is clicked
-             DATA_HANDLER.migrate(row);
-         }
+        rowClick:function(e, row) { //trigger an alert message when the row is clicked
+            DATA_HANDLER.migrate(row);
+        }
     };
 
     // Leaflet map, event feed, and grouped events feed.
@@ -61,15 +61,6 @@ var OM_DATA_HANDLER = (function() {
     return DATA_HANDLER;
 })();
 
-
-
-var OC_DATA_HANDLER = (function() {
-    var OC_TABULAR_OPTIONS = {
-
-    };
-
-    return null;
-})();
 
 
 //// TESTING ///////////////////////
