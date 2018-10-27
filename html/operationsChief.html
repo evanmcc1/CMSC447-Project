@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <title>Map test</title>
+    <link rel="stylesheet" type="text/css" href="leaflet/leaflet.css" />
+    <script type="text/javascript" src="leaflet/leaflet.js"></script>
+    <link rel="stylesheet" type="text/css" href="tabulator/dist/css/tabulator_midnight.min.css" />
+    <script type="text/javascript" src="tabulator/dist/js/tabulator_core.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/primary.css" />
+    <link rel="stylesheet" type="text/css" href="css/mapInterface.css" />
+    <link rel="stylesheet" type="text/css" href="css/operationsChief.css" />
+  </head>
+  <body>
+    <table id="content"><tbody><tr>
+      <td id="left_half">
+        <div id="leaflet_map"></div>
+      </td>
+      <td id="right_half">
+        <div class="toolbar" id="nav_toolbar"> <!-- Navigation buttons -->
+          <button>OM</button>
+          <button>Ticket form</button>
+          <button>Logout</button>
+        </div>
+        <div id="accept_reject_toolbar">
+          <button>Accept</button>
+          <button>Reject</button>
+        </div>
+        <div class="toolbar">
+          Mission feed
+          <button>Filter</button>
+        </div>
+        <div id="mission_feed"></div>
+        <div class="toolbar">
+          Groups 
+          <button>Submit</button>
+        </div>
+        <div id="mission_events_table"></div>
+      </td>
+    </tr></tbody></table>
+    <script type="text/javascript" src="js/rrMapTableInterface.js"></script>
+    <script type="text/javascript" src="js/ocMapInterface.js"></script>
+  </body>
+</html>
