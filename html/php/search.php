@@ -39,6 +39,43 @@ function q_to_json($mysqli, $q)
     return json_encode($res_set);
 }
 
+function deg2miles(
+    $latitudeFrom, $longitudeFrom, $latitudeTo, $longitudeTo, $earthRadius)
+{
+    // source: https://stackoverflow.com/questions/10053358/measuring-the-distance-between-two-coordinates-in-php
+    // convert from degrees to radians
+    $latFrom = deg2rad($latitudeFrom);
+    $lonFrom = deg2rad($longitudeFrom);
+    $latTo = deg2rad($latitudeTo);
+    $lonTo = deg2rad($longitudeTo);
+
+    $latDelta = $latTo - $latFrom;
+    $lonDelta = $lonTo - $lonFrom;
+
+    $angle = 2 * asin(sqrt(pow(sin($latDelta / 2), 2) +
+            cos($latFrom) * cos($latTo) * pow(sin($lonDelta / 2), 2)));
+    return $angle * $earthRadius;
+}
+
+function miles2deg(
+    $latitudeFrom, $longitudeFrom, $latitudeTo, $longitudeTo, $earthRadius)
+{
+
+    // source: https://stackoverflow.com/questions/10053358/measuring-the-distance-between-two-coordinates-in-php
+    // convert from degrees to radians
+    $latFrom = deg2rad($latitudeFrom);
+    $lonFrom = deg2rad($longitudeFrom);
+    $latTo = deg2rad($latitudeTo);
+    $lonTo = deg2rad($longitudeTo);
+
+    $latDelta = $latTo - $latFrom;
+    $lonDelta = $lonTo - $lonFrom;
+
+    $angle = 2 * asin(sqrt(pow(sin($latDelta / 2), 2) +
+            cos($latFrom) * cos($latTo) * pow(sin($lonDelta / 2), 2)));
+    return $angle * $earthRadius;
+}
+
 if (key($_GET) == "search_callers") {
     // Create connection
     $conn = new mysqli($servername, $username, $password, $dbname);
@@ -91,6 +128,11 @@ if (key($_POST) == "location_radius") {
     if ($conn->connect_error) {
         die("Connection failed: " . $conn->connect_error);
     }
+
+    $rad = haversineGreatCircleDistance(
+        $_POST['lat'],$_POST['lat'] - $_POST['rad'],
+        $_POST['long'],$_POST['long'] - $_POST['rad'])
+
     $lat_range = array($_POST['lat'] - $_POST['rad'], $_POST['lat'] + $_POST['rad']);
     $long_range = array($_POST['long'] - $_POST['rad'], $_POST['long'] + $_POST['rad']);
 
