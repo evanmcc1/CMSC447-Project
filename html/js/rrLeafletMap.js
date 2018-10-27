@@ -89,11 +89,11 @@ var rrLeafletMap = (function() {
         // is selected. 
         map.addMarker = function(event) {
             var marker = L.marker([event['lat'], event['long']]);
-            marker.id = event.id;
+            marker.id = event.event_id;
             marker.circle = L.circle(marker.getLatLng(), 
                                     (event['rad'] * MAP_NS.CONST.TO_M_MAGIC), 
                                     MAP_NS.VECTOR_OPTIONS);
-            marker.bindTooltip(event['desc'], MAP_NS.TOOLTIP_OPTIONS);
+            marker.bindTooltip(event['body'], MAP_NS.TOOLTIP_OPTIONS);
             this.displayed.push(marker);
             marker.addTo(this);
         };
@@ -116,15 +116,26 @@ var rrLeafletMap = (function() {
         };
 
         // Displays only markers withing mi miles of lat and lng.
+        // Returns list of the IDs of events removed.
         map.filterByRadius = function(lat, lng, mi) {
+            var removed = [];
+
             for (var marker of this.displayed) {
                 var coords = marker.getLatLng();
                 var a = Math.abs(lat - coords.lat) * MAP_NS.CONST.LAT_MAGIC;
                 var b = Math.abs(lng - coords.lng) * MAP_NS.CONST.LNG_MAGIC * Math.cos(lat);
                 var isIn = Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2)) <= mi
                     
-                isIn ? marker.addTo(this) : marker.remove();
+                if (isIn) {
+                    marker.addTo(this);
+                }
+                else {
+                    removed.push(marker.id);
+                    marker.remove();
+                }
             }
+
+            return removed;
         };
 
         // Adds a point to the map for drawing lines.

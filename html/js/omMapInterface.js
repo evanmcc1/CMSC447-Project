@@ -9,10 +9,11 @@ var OM_DATA_HANDLER = (function() {
     var OM_TABULAR_OPTIONS = {
         layout: "fitColumns",
         columns: [
-            {title:"Id", field:"id"},
-            {title:"Name", field:"name"},
-            {title:"Class", field:"class"},
-            {title:"Recieved", field:"recieved"}
+            {title:"ID", field:"event_id"},
+            {title:"Title", field:"title"},
+            {title:"Type", field:"category_label"},
+            {title:"Priority", field:"priority"},
+            {title:"Recieved", field:"create_time"}
         ],
         rowClick:function(e, row) { //trigger an alert message when the row is clicked
             DATA_HANDLER.migrate(row);
@@ -42,12 +43,12 @@ var OM_DATA_HANDLER = (function() {
             if (EVENT_FEED.getRowPosition(row) > -1) {
                 row.delete();
                 GROUPED_EVENTS.addRow(row.getData());
-                LF_MAP.markSelected(row._row.data.id, true); // Shouldnt be accessing this??
+                LF_MAP.markSelected(row._row.data.event_id, true); // Shouldnt be accessing this??
             }
             else if (GROUPED_EVENTS.getRowPosition(row) > -1) {
                 row.delete();
                 EVENT_FEED.addRow(row.getData());
-                LF_MAP.markSelected(row._row.data.id, false);
+                LF_MAP.markSelected(row._row.data.event_id, false);
             }
         }
     };
@@ -66,33 +67,36 @@ var OM_DATA_HANDLER = (function() {
 //// TESTING ///////////////////////
 OM_DATA_HANDLER.query([
 {
-    "id":123, 
-    "name":123, 
-    "class":"fire",
-    "recieved": "date",
+    "event_id":123,
+    "severity":1, 
+    "title":123, 
+    "category_label":"danger",
+    "create_time": "date",
     "rad": 0.2, 
     "lat": 39.123, 
     "long": -76.824, 
-    "desc": "description of event."
+    "body": "description of event."
 },
 {
-    "id":124, 
-    "name":124, 
-    "class":"cat",
-    "recieved": "recently", 
+    "event_id":124,
+    "severity":2,  
+    "title":124, 
+    "category_label":"evil",
+    "create_time": "recently", 
     "rad": 0.3,
     "lat": 39.131, 
     "long": -76.842, 
-    "desc": "cat on fire."
+    "body": "cat on fire."
 },
 {
-    "id":125, 
-    "name":125, 
-    "class":"superman",
-    "recieved": "date", 
+    "event_id":125, 
+    "severity":3, 
+    "title":125, 
+    "category_label":"fire",
+    "create_time": "date", 
     "rad": 0.4,
     "lat": 39.111, 
     "long": -76.828, 
-    "desc": "Lois Lane captured by Lex Luther."
+    "body": "Lois Lane captured by Lex Luther."
 }]);
 ////////////////////////////////////
