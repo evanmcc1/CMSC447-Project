@@ -23,29 +23,31 @@ $dbname = "rrdb";
 echo "hi, thank you for " . key($_POST);
 
 if (key($_POST) == "add_caller") {
+    echo "\n:: running " . key($_POST);
     // Create connection
     $conn = new mysqli($servername, $username, $password, $dbname);
     // Check connection
     if ($conn->connect_error) {
         echo "Error: Failed to make a MySQL connection, here is why: \n";
-        echo "Errno: " . $mysqli->connect_errno . "\n";
-        echo "Error: " . $mysqli->connect_error . "\n";
+        echo "Errno: " . $conn->connect_errno . "\n";
+        echo "Error: " . $conn->connect_error . "\n";
         die("Connection failed: " . $conn->connect_error);
     }
     $q = <<<EOT
-    INSERT INTO callers(fname, lname, phone) values ({$_POST["fname"]}.{$_POST["lname"]}.{$_POST["phone"]});
+    INSERT INTO callers(fname, lname, phone) values('{$_POST["fname"]}','{$_POST["lname"]}',{$_POST["phone"]});
 EOT;
-    $result = $conn->query($q);
-    print_r($result->fetch_assoc());
-
-    if ($result->num_rows === 0) {
-        // Oh, no rows! Sometimes that's expected and okay, sometimes
-        // it is not. You decide. In this case, maybe actor_id was too
-        // large?
-        echo "We could not find a match for ID $aid, sorry about that. Please try again.";
-        exit;
+    echo "\n:: SQL = " . $q;
+    if (!$conn->query($q)) {
+        echo "\n:: Insert failed: (" . $conn->errno . ") " . $conn->error;
     }
+    $conn->commit();
 
+    $res = $conn->query("SELECT * FROM callers");
+    $row = $res->fetch_assoc();
+
+    echo json_encode($row);
+
+    $conn->close();
 }
 
 
@@ -58,7 +60,7 @@ if (key($_POST) == "add_event") {
         die("Connection failed: " . $conn->connect_error);
     }
     $q = <<<EOT
-    SELECT * from event_tickets WHERE title LIKE '%{$_POST["title"]}%'
+    SELECT * from event_tickets WHERE title_old LIKE '%{$_POST["title"]}%'
 EOT;
     $res = $conn->query($q);
 

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Test PHP files</title>
+    <style>
+        form {
+            background-color: #dddddd;
+        }
+
+
+    </style>
+</head>
+<body>
+
+<form action="search.php" method="get">
+    <input type="hidden" name="search_callers">
+    <table cellpadding="10">
+        <tr>
+            <th>Search Callers</th>
+            <th>Find by First Name: <input type="text" name="fname"></th>
+            <th>Find by Last Name: <input type="text" name="lname"></th>
+            <th>(Leave both blank to see all)</th>
+            <th><input type="submit"></th>
+        </tr>
+    </table>
+</form>
+<form action="search.php" method="get">
+    <input type="hidden" name="get_events">
+    <table cellpadding="10">
+        <tr>
+            <th>Get all events</th>
+            <th><input type="submit"></th>
+        </tr>
+    </table>
+</form>
+<form action="search.php" method="post">
+    <input type="hidden" name="location_radius">
+    <table cellpadding="10">
+        <tr>
+            <th>Get all events in radius of lat/long:</th>
+            <th>Latitude: <input type="text" name="lat"></th>
+            <th>Longitude: <input type="text" name="long"></th>
+            <th>Radius (in degrees): <input type="text" name="rad"></th>
+            <th><input type="submit"></th>
+        </tr>
+    </table>
+</form>
+
+</body>
+</html>
