@@ -6,28 +6,20 @@
  */
 var OM_DATA_HANDLER = (function() {
 
-    var OM_TABULAR_OPTIONS = {
-        layout: "fitColumns",
-        columns: [
-            {title:"ID", field:"event_id"},
-            {title:"Title", field:"title"},
-            {title:"Type", field:"category_label"},
-            {title:"Priority", field:"priority"},
-            {title:"Recieved", field:"create_time"}
-        ],
-        rowClick:function(e, row) { //trigger an alert message when the row is clicked
+    var EVENT_TABLE_OPTIONS = new RR.rrEventTableOptions(
+        onRowClick=function(e, row) {
             DATA_HANDLER.migrate(row);
         }
-    };
+    );
 
     // Leaflet map, event feed, and grouped events feed.
-    var LF_MAP = rrLeafletMap("leaflet_map");
-    var EVENT_FEED = new Tabulator("#filtered_event_feed", OM_TABULAR_OPTIONS);
-    var GROUPED_EVENTS = new Tabulator("#grouped_events_table", OM_TABULAR_OPTIONS);
+    var LF_MAP = RR.rrLeafletMap("leaflet_map");
+    var EVENT_FEED = new Tabulator("#filtered_event_feed", EVENT_TABLE_OPTIONS);
+    var GROUPED_EVENTS = new Tabulator("#grouped_events_table", EVENT_TABLE_OPTIONS);
 
     var DATA_HANDLER = {
         // Queries data from the DB and then displays them on the page. 
-        query: function(parameters) {
+        queryEvents: function(parameters) {
             // Query json object from DB
             LF_MAP.addAllEvents(parameters);
             EVENT_FEED.setData(parameters);
@@ -65,7 +57,7 @@ var OM_DATA_HANDLER = (function() {
 
 
 //// TESTING ///////////////////////
-OM_DATA_HANDLER.query([
+OM_DATA_HANDLER.queryEvents([
 {
     "event_id":123,
     "severity":1, 
@@ -99,4 +91,4 @@ OM_DATA_HANDLER.query([
     "long": -76.828, 
     "body": "Lois Lane captured by Lex Luther."
 }]);
-////////////////////////////////////
+///////////////////////////////////
