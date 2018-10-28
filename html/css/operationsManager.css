@@ -5,3 +5,9 @@
 #grouped_events_table {
 	height: 35%;
 }
+
+#filter_form {
+	display: none;
+	height: 40%;
+	overflow: hidden;
+}

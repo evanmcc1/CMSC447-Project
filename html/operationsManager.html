@@ -1,14 +1,16 @@
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
-    <title>Map test</title>
+    <title>Manager</title>
+    <meta charset="utf-8" />
     <link rel="stylesheet" type="text/css" href="leaflet/leaflet.css" />
     <link rel="stylesheet" type="text/css" href="tabulator/dist/css/tabulator_midnight.min.css" />
     <script type="text/javascript" src="leaflet/leaflet.js"></script>
     <script type="text/javascript" src="tabulator/dist/js/tabulator_core.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="css/mapInterface.css" />
     <link rel="stylesheet" type="text/css" href="css/primary.css" />
+    <link rel="stylesheet" type="text/css" href="css/mapInterface.css" />
+   	<link rel="stylesheet" type="text/css" href="css/operationsManager.css" />
   </head>
   <body>
     <table id="content"><tbody><tr>
@@ -21,19 +23,27 @@
           <button>Ticket form</button>
           <button>Logout</button>
         </div>
+        <div id="filter_form">
+        	<!-- 
+        		the function embedQueryForm() defined in eventQueryForm.js will embed the form here.
+        		The callback function to process the query result and display the points of the map
+        		will be passed into the function. 
+        	-->
+        </div>
         <div class="toolbar">
           Event feed
-          <button>Filter</button>
+          <button id="filter_button">Filter</button>
         </div>
         <div id="filtered_event_feed"></div>
-        <div class="toolbar">
-          Groups 
-          <button>Submit</button>
-        </div>
-        <div id="grouped_events_table"></div>
+	        <div id="groups_toolbar" class="toolbar">
+	          Groups 
+	          <button>Submit</button>
+	        </div>
+	        <div id="grouped_events_table"></div>
       </td>
     </tr></tbody></table>
-    <script type="text/javascript" src="js/rrLeafletMap.js"></script>
+    <script type="text/javascript" src="js/eventQueryForm.js"></script>
+    <script type="text/javascript" src="js/rrMapTableInterface.js"></script>
     <script type="text/javascript" src="js/omMapInterface.js"></script>
   </body>
 </html>

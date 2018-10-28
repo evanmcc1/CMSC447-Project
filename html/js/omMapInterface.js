@@ -4,32 +4,45 @@
  * method of EVENT_HANDLER. The event handler will deal with the map and tables.
  * The DATA_HANDLER is the middleman between the user and the map/table.
  */
+
+// var xhr = new XMLHttpRequest();
+    // You will have to do some tweaking below to to match our submit forms
+// var url = "url?data=" + encodeURIComponent(
+//     JSON.stringify({"email": "hey@mail.com", "password": "101010"}));
+// xhr.open("GET", url, true);
+// xhr.setRequestHeader("Content-Type", "application/json");
+// xhr.onreadystatechange = function () {
+//     if (xhr.readyState === 4 && xhr.status === 200) {
+            // below json variable creates the JS object
+//         var json = JSON.parse(xhr.responseText);
+//         console.log(json.email + ", " + json.password);
+//     }
+// };
+
+/**
+ * The DATA_HANDLER is responsible for keeping the map and tables 
+ * synchronized. Each handler on the page which affets events should invoke a
+ * method of EVENT_HANDLER. The event handler will deal with the map and tables.
+ * The DATA_HANDLER is the middleman between the user and the map/table.
+ */
 var OM_DATA_HANDLER = (function() {
 
-    var OM_TABULAR_OPTIONS = {
-        layout: "fitColumns",
-        columns: [
-            {title:"ID", field:"event_id"},
-            {title:"Title", field:"title"},
-            {title:"Type", field:"category_label"},
-            {title:"Priority", field:"priority"},
-            {title:"Recieved", field:"create_time"}
-        ],
-        rowClick:function(e, row) { //trigger an alert message when the row is clicked
+    var EVENT_TABLE_OPTIONS = new RR.rrEventTableOptions(
+        onRowClick=function(e, row) {
             DATA_HANDLER.migrate(row);
         }
-    };
+    );
 
     // Leaflet map, event feed, and grouped events feed.
-    var LF_MAP = rrLeafletMap("leaflet_map");
-    var EVENT_FEED = new Tabulator("#filtered_event_feed", OM_TABULAR_OPTIONS);
-    var GROUPED_EVENTS = new Tabulator("#grouped_events_table", OM_TABULAR_OPTIONS);
+    var LF_MAP = RR.rrLeafletMap("leaflet_map");
+    var EVENT_FEED = new Tabulator("#filtered_event_feed", EVENT_TABLE_OPTIONS);
+    var GROUPED_EVENTS = new Tabulator("#grouped_events_table", EVENT_TABLE_OPTIONS);
 
     var DATA_HANDLER = {
         // Queries data from the DB and then displays them on the page. 
-        query: function(parameters) {
-            // Query json object from DB
-            LF_MAP.addAllEvents(parameters);
+        processEvents: function(parameters) {
+            LF_MAP.reset();
+            LF_MAP.addAll(parameters);
             EVENT_FEED.setData(parameters);
         },
 
@@ -50,6 +63,9 @@ var OM_DATA_HANDLER = (function() {
                 EVENT_FEED.addRow(row.getData());
                 LF_MAP.markSelected(row._row.data.event_id, false);
             }
+            else {
+            	alert("Undefined behavior in omMapInterface.js DATA_HANDLER migrate")
+            }
         }
     };
 
@@ -59,13 +75,37 @@ var OM_DATA_HANDLER = (function() {
         });
     }
 
+
+    // Idea for the form function. Allows interaction with embedded form
+    embedQueryForm("filter_form", "php/search.html", DATA_HANDLER.processEvents);
+
+
+    document.getElementById("filter_button").addEventListener('click', function(e) {
+    	var table = document.getElementById("grouped_events_table");
+    	var toolbar = document.getElementById("groups_toolbar");
+    	var form = document.getElementById("filter_form");
+
+    	if (e.target.textContent == "Filter") {
+    		e.target.textContent = "Done";
+	    	toolbar.style.display = "none";
+	    	table.style.display = "none";
+	    	form.style.display = "block";
+	    }
+	    else {
+	    	e.target.textContent = "Filter";
+	    	form.style.display = "none";
+	    	toolbar.style.display = "block";
+	    	table.style.display = "block";
+	    }
+    });
+
     return DATA_HANDLER;
 })();
 
 
 
 //// TESTING ///////////////////////
-OM_DATA_HANDLER.query([
+OM_DATA_HANDLER.processEvents([
 {
     "event_id":123,
     "severity":1, 
@@ -99,4 +139,4 @@ OM_DATA_HANDLER.query([
     "long": -76.828, 
     "body": "Lois Lane captured by Lex Luther."
 }]);
-////////////////////////////////////
+///////////////////////////////////

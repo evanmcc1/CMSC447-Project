@@ -36,7 +36,8 @@ var OC_DATA_HANDLER = (function() {
         // Queries data from the DB and then displays them on the page. 
         queryMissions: function(parameters) {
             // Query json object from DB
-            LF_MAP.addAllEvents(parameters);
+            LF_MAP.reset();
+            LF_MAP.addAll(parameters);
             MISSION_FEED.setData(parameters);
         },
 
