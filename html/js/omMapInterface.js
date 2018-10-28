@@ -40,8 +40,7 @@ var OM_DATA_HANDLER = (function() {
 
     var DATA_HANDLER = {
         // Queries data from the DB and then displays them on the page. 
-        queryEvents: function(parameters) {
-        	var functionParam = 
+        processEvents: function(parameters) {
             LF_MAP.reset();
             LF_MAP.addAll(parameters);
             EVENT_FEED.setData(parameters);
@@ -76,6 +75,11 @@ var OM_DATA_HANDLER = (function() {
         });
     }
 
+
+    // Idea for the form function. Allows interaction with embedded form
+    embedQueryForm("filter_form", "php/search.html", DATA_HANDLER.processEvents);
+
+
     document.getElementById("filter_button").addEventListener('click', function(e) {
     	var table = document.getElementById("grouped_events_table");
     	var toolbar = document.getElementById("groups_toolbar");
@@ -101,7 +105,7 @@ var OM_DATA_HANDLER = (function() {
 
 
 //// TESTING ///////////////////////
-OM_DATA_HANDLER.queryEvents([
+OM_DATA_HANDLER.processEvents([
 {
     "event_id":123,
     "severity":1, 
