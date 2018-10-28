@@ -1,14 +1,13 @@
 #filtered_event_feed {
 	height: 50%;
-	display: block;
 }
 
 #grouped_events_table {
-	display: block;
 	height: 35%;
 }
 
 #filter_form {
 	display: none;
 	height: 40%;
+	overflow: hidden;
 }

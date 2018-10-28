@@ -4,6 +4,27 @@
  * method of EVENT_HANDLER. The event handler will deal with the map and tables.
  * The DATA_HANDLER is the middleman between the user and the map/table.
  */
+
+// var xhr = new XMLHttpRequest();
+    // You will have to do some tweaking below to to match our submit forms
+// var url = "url?data=" + encodeURIComponent(
+//     JSON.stringify({"email": "hey@mail.com", "password": "101010"}));
+// xhr.open("GET", url, true);
+// xhr.setRequestHeader("Content-Type", "application/json");
+// xhr.onreadystatechange = function () {
+//     if (xhr.readyState === 4 && xhr.status === 200) {
+            // below json variable creates the JS object
+//         var json = JSON.parse(xhr.responseText);
+//         console.log(json.email + ", " + json.password);
+//     }
+// };
+
+/**
+ * The DATA_HANDLER is responsible for keeping the map and tables 
+ * synchronized. Each handler on the page which affets events should invoke a
+ * method of EVENT_HANDLER. The event handler will deal with the map and tables.
+ * The DATA_HANDLER is the middleman between the user and the map/table.
+ */
 var OM_DATA_HANDLER = (function() {
 
     var EVENT_TABLE_OPTIONS = new RR.rrEventTableOptions(
@@ -20,7 +41,7 @@ var OM_DATA_HANDLER = (function() {
     var DATA_HANDLER = {
         // Queries data from the DB and then displays them on the page. 
         queryEvents: function(parameters) {
-            // Query json object from DB
+        	var functionParam = 
             LF_MAP.reset();
             LF_MAP.addAll(parameters);
             EVENT_FEED.setData(parameters);
