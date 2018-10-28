@@ -2,18 +2,10 @@
 	width: 60%;
 }
 
-#left_half>div, #right_half>div, #content {
+#left_half>div, #right_half>div, #content, #filter_form {
 	width: 100%;
 }
 
 #content {
 	height: 100%;
-}
-
-#filtered_event_feed {
-	height: 50%;
-}
-
-#grouped_events_table {
-	height: 35%;
 }

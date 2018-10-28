@@ -66,23 +66,36 @@ var RR = {
             document.getElementById(ID)
                 .style.height = window.innerHeight + "px";
 
-            map.displayed = [];  // All icons currently on the map.
+            map.displayed = []; // All the markers displayed on the map.
             map.selected = null; // Used to close tooltip of event last focused on.
             map.shapes = {
                 points: [],   // The current points on the map.
                 lines: [],    // The current lines on the map.
                 polygon: null // The current polygon on the map.
             };
-            
-            // Removes all icons from the map
-            map.clear = function() {
+
+            // Clears everything on the map and forgets all markers and vectors. 
+            map.reset = function() {
                 for (var marker of this.displayed) {
+                    marker.circle.remove();
                     marker.remove();
                 }
                 this.displayed = [];
+                this.selected = null;
+
+                for (var point of this.shapes.points) {
+                    point.remove();
+                }
+                this.shapes.points = [];
+
+                for (var line of this.shapes.lines) {
+                    line.remove();
+                }
+                this.shapes.lines = [];
+                this.shapes.polygon = null;
             };
 
-            // Returns marker displayd on map with the given id.
+            // Returns marker displayed on map with the given id.
             map.getMarker = function(ID) {
                 return this.displayed.find(function(marker) {
                     return marker.id == ID;
@@ -93,8 +106,12 @@ var RR = {
             map.describeMarker = function(ID) {
                 this.selected && this.selected.closeTooltip();
                 var marker = this.getMarker(ID);
-                marker.openTooltip();
-                this.selected = marker
+
+                if (marker) {
+                    marker.openTooltip();
+                    this.selected = marker
+                }
+
                 return !!marker;
             };
 
@@ -124,9 +141,8 @@ var RR = {
             // Adds to the map and displays all the supplied events.
             // Events is an array of JSON event object.
             // This also fits map around the events. addMarker does not.
-            map.addAllEvents = function(events) {
+            map.addAll = function(events) {
                 var bounds = []; // Used to fit map to markers.
-                this.clear();
 
                 // Add the new markers
                 for (var event of events) {
@@ -136,22 +152,6 @@ var RR = {
 
                 // Fit the view to the scope of the markers
                 bounds.length && this.fitBounds(bounds, MAP_NS.AUTOPAN_OPTIONS);
-            };
-
-            // Displays only markers withing mi miles of lat and lng.
-            // Returns list of the IDs of events removed.
-            map.filterByRadius = function(lat, lng, mi) {
-                this.reset();
-
-                var removed = this.displayed.filter(function(marker) {
-                    var coords = marker.getLatLng();
-                    var a = Math.abs(lat - coords.lat) * MAP_NS.CONST.LAT_MAGIC;
-                    var b = Math.abs(lng - coords.lng) * MAP_NS.CONST.LNG_MAGIC * Math.cos(lat);
-                    return Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2)) <= mi
-                });
-
-                removed.forEach(marker.remove);
-                return removed;
             };
 
             // Adds a point to the map for drawing lines.

@@ -21,7 +21,8 @@ var OM_DATA_HANDLER = (function() {
         // Queries data from the DB and then displays them on the page. 
         queryEvents: function(parameters) {
             // Query json object from DB
-            LF_MAP.addAllEvents(parameters);
+            LF_MAP.reset();
+            LF_MAP.addAll(parameters);
             EVENT_FEED.setData(parameters);
         },
 
@@ -42,6 +43,9 @@ var OM_DATA_HANDLER = (function() {
                 EVENT_FEED.addRow(row.getData());
                 LF_MAP.markSelected(row._row.data.event_id, false);
             }
+            else {
+            	alert("Undefined behavior in omMapInterface.js DATA_HANDLER migrate")
+            }
         }
     };
 
@@ -50,6 +54,25 @@ var OM_DATA_HANDLER = (function() {
             DATA_HANDLER.select(e.target.parentNode);
         });
     }
+
+    document.getElementById("filter_button").addEventListener('click', function(e) {
+    	var table = document.getElementById("grouped_events_table");
+    	var toolbar = document.getElementById("groups_toolbar");
+    	var form = document.getElementById("filter_form");
+
+    	if (e.target.textContent == "Filter") {
+    		e.target.textContent = "Done";
+	    	toolbar.style.display = "none";
+	    	table.style.display = "none";
+	    	form.style.display = "block";
+	    }
+	    else {
+	    	e.target.textContent = "Filter";
+	    	form.style.display = "none";
+	    	toolbar.style.display = "block";
+	    	table.style.display = "block";
+	    }
+    });
 
     return DATA_HANDLER;
 })();
