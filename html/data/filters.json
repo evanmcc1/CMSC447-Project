@@ -1,0 +1,33 @@
+{
+  "filter_by_name": [
+    {
+      "t": "input",
+      "type": "hidden",
+      "name": "search_callers"
+    },
+    {
+      "t": "p",
+      "display": "Find By First Name"
+    },
+    {
+      "t": "input",
+      "type": "text",
+      "name": "fname"
+    },
+    {
+      "t": "p",
+      "display": "Find By Last Name"
+    },
+    {
+      "t": "input",
+      "type": "text",
+      "name": "lname"
+    },
+    {
+      "t": "input",
+      "type": "button",
+      "name": "filter",
+      "value" : "Filter"
+    }
+  ]
+}

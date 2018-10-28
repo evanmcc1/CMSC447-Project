@@ -3,38 +3,108 @@
 <head>
     <meta charset="UTF-8">
     <title>Populate Database</title>
+    <style>
+        table {
+            background-color: #dddddd;
+            text-align: left;
+        }
+
+
+    </style>
 </head>
 <body>
 
 <table>
     <tr>
         <form action="pop.php" method="post">
-        <input type="hidden" name="add_caller">
+            <input type="hidden" name="add_caller">
 
-        <th>
-            <b>Create Caller:</b>
-        </th>
-        <th>
-            fname
-            <input type="text" name="fname">
-        </th>
-        <th>
-            lname
-            <input type="text" name="lname">
-        </th>
-        <th>
-            phone
-            <input type="text" name="phone">
-        </th>
-        <th>
-            <input type="submit">
-        </th>
+            <th>
+                <h3>Create Caller:</h3>
+            </th>
+            <th>
+                fname
+                <input type="text" name="fname">
+            </th>
+            <th>
+                lname
+                <input type="text" name="lname">
+            </th>
+            <th>
+                phone
+                <input type="text" name="phone">
+            </th>
+            <th>
+                <input type="submit">
+            </th>
 
         </form>
     </tr>
     <tr>
 
     </tr>
+</table>
+<br>
+<table>
+    <form action="pop.php" method="post">
+        <input type="hidden" name="add_event">
+        <tr>
+            <th>
+                <h3>Create event:</h3>
+            </th>
+        </tr>
+        <tr>
+            <th>
+                Caller First Name
+                <input type="text" name="callers.fname">
+            </th>
+            <th>
+                Caller Last Name
+                <input type="text" name="callers.lname">
+            </th>
+            <th>
+                Caller Phone
+                <input type="text" name="callers.phone">
+            </th>
+        </tr>
+        <tr>
+            <th>
+                Event Title
+                <input type="text" name="event_info.title">
+                <br>
+                Event Priority
+                <input type="text" name="event_info.priority" value="1">
+            </th>
+            <th>
+                Event body
+                <textarea name="event_info.body"></textarea>
+            </th>
+            <th>
+                Category ID
+                <input type="text" name="event_info.category_id" value="1">
+                <br>
+                Lat,Long,Rad
+                <input type="text" name="event_info.lat">
+                <input type="text" name="event_info.long">
+                <input type="text" name="event_info.rad">
+            </th>
+        <tr>
+            <th>
+                Address 1
+                <input type="text" name="event_info.address">
+                <br>
+                City, State
+                <input type="text" name="event_info.city">
+                <input type="text" name="event_info.state" size="1">
+                <br>
+                Zip
+                <input type="text" name="event_info.zip" width="3">
+            </th>
+        <th>User ID <input type="text" name="event_info.user_id" width="3" value="1"></th>
+        <th><input type="submit"></th>
+        </tr>
+
+    </form>
 </table>
 
 </body>
