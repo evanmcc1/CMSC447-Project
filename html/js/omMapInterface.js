@@ -21,7 +21,6 @@ var OM_DATA_HANDLER = (function() {
     var DATA_HANDLER = {
         // Queries data from the DB and then displays them on the page. 
         queryEvents: function(parameters) {
-        	var functionParam = 
             LF_MAP.reset();
             LF_MAP.addAll(parameters);
             EVENT_FEED.setData(parameters);
@@ -34,18 +33,15 @@ var OM_DATA_HANDLER = (function() {
 
         // Moves the event from its event table to the other 
         migrate: function(row) {
+        	row.delete();
+
             if (EVENT_FEED.getRowPosition(row) > -1) {
-                row.delete();
                 GROUPED_EVENTS.addRow(row.getData());
                 LF_MAP.markSelected(row._row.data.event_id, true); // Shouldnt be accessing this??
             }
-            else if (GROUPED_EVENTS.getRowPosition(row) > -1) {
-                row.delete();
+            else {
                 EVENT_FEED.addRow(row.getData());
                 LF_MAP.markSelected(row._row.data.event_id, false);
-            }
-            else {
-            	alert("Undefined behavior in omMapInterface.js DATA_HANDLER migrate")
             }
         }
     };
