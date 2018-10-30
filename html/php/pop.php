@@ -54,18 +54,20 @@ EOT;
 
     $conn->close();
 }
-
-if (key($_POST) == "add_event") {
-//    echo ":: running " . key($_POST);
+print_r($_SERVER);
+print_r($_REQUEST);
+echo ($_POST);
+if (key($_REQUEST) == "add_event") {
+    echo ":: running " . key($_REQUEST);
 //    echo "<br>";
-//    print_r($_POST);
+//    print_r($_REQUEST);
 //    echo "<br>";
-    array_walk($_POST, sql_safe);
+    array_walk($_REQUEST, sql_safe);
     $q = <<<EOT
     INSERT INTO callers(fname, lname, phone) values(
-    '{$_POST["callers_fname"]}',
-    '{$_POST["callers_lname"]}',
-    {$_POST["callers_phone"]})
+    '{$_REQUEST["callers_fname"]}',
+    '{$_REQUEST["callers_lname"]}',
+    {$_REQUEST["callers_phone"]})
 EOT;
     echo "\n:: SQL = " . $q;
     echo "<br>";
@@ -76,7 +78,7 @@ EOT;
     $caller_id = $conn->insert_id;
 
     $q = <<<EOT
-    INSERT INTO event_tickets(title_old) values('{$_POST["event_info_title"]}')
+    INSERT INTO event_tickets(title_old) values('{$_REQUEST["event_info_title"]}')
 EOT;
 //    echo "\n:: SQL = " . $q;
 //    echo "<br>";
@@ -103,12 +105,12 @@ EOT;
                            event_info.category_id, event_info.lat, 
                            event_info.long, event_info.address,
                            event_info.city, event_info.state,
-                           event_info.zip, event_info.user_id, event_info.rad) values(
-    {$event_id}, '{$_POST["event_info_title"]}', {$_POST["event_info_priority"]},
-    '{$_POST["event_info_body"]}', {$_POST["event_info_category_id"]}, 
-    {$_POST["event_info_lat"]}, {$_POST["event_info_long"]}, '{$_POST["event_info_address"]}',
-    '{$_POST["event_info_city"]}', '{$_POST["event_info_state"]}', {$_POST["event_info_zip"]}, 
-    {$_POST["event_info_user_id"]}, {$_POST["event_info_rad"]})
+                           event_info.zip, event_info.user_id, event_info.rad, event_info.status_id) values(
+    {$event_id}, '{$_REQUEST["event_info_title"]}', {$_REQUEST["event_info_priority"]},
+    '{$_REQUEST["event_info_body"]}', {$_REQUEST["event_info_category_id"]}, 
+    {$_REQUEST["event_info_lat"]}, {$_REQUEST["event_info_long"]}, '{$_REQUEST["event_info_address"]}',
+    '{$_REQUEST["event_info_city"]}', '{$_REQUEST["event_info_state"]}', {$_REQUEST["event_info_zip"]}, 
+    {$_REQUEST["event_info_user_id"]}, {$_REQUEST["event_info_rad"]},{$_REQUEST["event_info_status_id"]})
 EOT;
 //    echo "\n:: SQL = " . $q;
 //    echo "<br>";
@@ -123,11 +125,11 @@ EOT;
 }
 
 
-if (key($_POST) == "other") {
+if (key($_REQUEST) == "other") {
     // Create connection
 
     $q = <<<EOT
-    SELECT * from event_tickets WHERE title_old LIKE '%{$_POST["title"]}%'
+    SELECT * from event_tickets WHERE title_old LIKE '%{$_REQUEST["title"]}%'
 EOT;
     $res = $conn->query($q);
 

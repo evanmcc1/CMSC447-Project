@@ -6,7 +6,18 @@
     <style>
         table {
             background-color: #dddddd;
+            text-align: right;
+        }
+        th.event_cells {
+            font-size: small;
             text-align: left;
+        }
+        tr#header {
+            background-color: #777777;
+        }
+
+        tr#row {
+            background-color: #aaaaaa;
         }
 
 
@@ -14,36 +25,36 @@
 </head>
 <body>
 
-<table>
-    <tr>
-        <form action="pop.php" method="post">
-            <input type="hidden" name="add_caller">
+<!--<table>-->
+    <!--<tr>-->
+        <!--<form action="pop.php" method="post">-->
+            <!--<input type="hidden" name="add_caller">-->
 
-            <th>
-                <h3>Create Caller:</h3>
-            </th>
-            <th>
-                fname
-                <input type="text" name="fname">
-            </th>
-            <th>
-                lname
-                <input type="text" name="lname">
-            </th>
-            <th>
-                phone
-                <input type="text" name="phone">
-            </th>
-            <th>
-                <input type="submit">
-            </th>
+            <!--<th>-->
+                <!--<h3>Create Caller:</h3>-->
+            <!--</th>-->
+            <!--<th>-->
+                <!--fname-->
+                <!--<input type="text" name="fname">-->
+            <!--</th>-->
+            <!--<th>-->
+                <!--lname-->
+                <!--<input type="text" name="lname">-->
+            <!--</th>-->
+            <!--<th>-->
+                <!--phone-->
+                <!--<input type="text" name="phone">-->
+            <!--</th>-->
+            <!--<th>-->
+                <!--<input type="submit">-->
+            <!--</th>-->
 
-        </form>
-    </tr>
-    <tr>
+        <!--</form>-->
+    <!--</tr>-->
+    <!--<tr>-->
 
-    </tr>
-</table>
+    <!--</tr>-->
+<!--</table>-->
 <br>
 <table>
     <form action="pop.php" method="post">
@@ -83,9 +94,13 @@
                 Category ID
                 <input type="text" name="event_info.category_id" value="1">
                 <br>
-                Lat,Long,Rad
+                Lat
                 <input type="text" name="event_info.lat">
+                <br>
+                Long
                 <input type="text" name="event_info.long">
+                <br>
+                Rad
                 <input type="text" name="event_info.rad">
             </th>
         <tr>
@@ -93,19 +108,125 @@
                 Address 1
                 <input type="text" name="event_info.address">
                 <br>
-                City, State
+                City
                 <input type="text" name="event_info.city">
+                <br>
+                State
                 <input type="text" name="event_info.state" size="1">
                 <br>
                 Zip
                 <input type="text" name="event_info.zip" width="3">
             </th>
-        <th>User ID <input type="text" name="event_info.user_id" width="3" value="1"></th>
-        <th><input type="submit"></th>
+            <th>
+                User ID
+                <input type="text" name="event_info.user_id" width="3" value="1">
+            </th>
+            <th>
+                Status ID
+                <input type="text" name="event_info.status_id" width="3" value="1">
+            </th>
+            <th><input id="new_event" type="submit" value="Add Event"></th>
+            <script>
+
+                document.querySelector("#new_event").addEventListener("click", function (e) {
+                    e.preventDefault();
+                    let r = new XMLHttpRequest();
+                    let url = "pop.php?";
+                    let params = "add_event=&" + "" +
+                        "callers_fname=" +
+                        encodeURIComponent(document.querySelector("[name='callers.fname']").value) +
+                        "&callers_lname=" +
+                        encodeURIComponent(document.querySelector("[name='callers.lname']").value) +
+                        "&callers_phone=" +
+                        encodeURIComponent(document.querySelector("[name='callers.phone']").value) +
+                        "&event_info_title=" +
+                        encodeURIComponent(document.querySelector("[name='event_info.title']").value) +
+                        "&event_info_priority=" +
+                        encodeURIComponent(document.querySelector("[name='event_info.priority']").value) +
+                        "&event_info_body=" +
+                        encodeURIComponent(document.querySelector("[name='event_info.body']").value) +
+                        "&event_info_category_id=" +
+                        encodeURIComponent(document.querySelector("[name='event_info.category_id']").value) +
+                        "&event_info_lat=" +
+                        encodeURIComponent(document.querySelector("[name='event_info.lat']").value) +
+                        "&event_info_long=" +
+                        encodeURIComponent(document.querySelector("[name='event_info.long']").value) +
+                        "&event_info_rad=" +
+                        encodeURIComponent(document.querySelector("[name='event_info.rad']").value) +
+                        "&event_info_address=" +
+                        encodeURIComponent(document.querySelector("[name='event_info.address']").value) +
+                        "&event_info_city=" +
+                        encodeURIComponent(document.querySelector("[name='event_info.city']").value) +
+                        "&event_info_state=" +
+                        encodeURIComponent(document.querySelector("[name='event_info.state']").value) +
+                        "&event_info_zip=" +
+                        encodeURIComponent(document.querySelector("[name='event_info.zip']").value) +
+                        "&event_info_state=" +
+                        encodeURIComponent(document.querySelector("[name='event_info.state']").value) +
+                        "&event_info_user_id=" +
+                        encodeURIComponent(document.querySelector("[name='event_info.user_id']").value) +
+                        "&event_info_status_id=" +
+                        encodeURIComponent(document.querySelector("[name='event_info.status_id']").value);
+                    r.onreadystatechange = function () {
+                        if (this.readyState == 4 && this.status == 200) {
+                            // Typical action to be performed when the document is ready:
+                            let response = r.responseText;
+                            refresh_events();
+                        }
+                    };
+                    r.open("post", url + params);
+                    r.send();
+                });
+
+            </script>
+
         </tr>
 
     </form>
 </table>
+<br>
+<table id="events"></table>
+
+<script>
+    function refresh_events() {
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                // Typical action to be performed when the document is ready:
+                var events = JSON.parse(xhttp.responseText);
+                var event_table = document.querySelector("#events");
+                event_table.innerHTML = "";
+                events.forEach(function (event, i) {
+                    var row;
+                    if (i === 0) {
+                        row = document.createElement("tr");
+                        row.setAttribute("id", "header");
+                        for (let k in event) {
+                            var cell = document.createElement("th");
+                            cell.innerHTML = k;
+                            row.appendChild(cell)
+                        }
+                        event_table.appendChild(row)
+                    }
+                    row = document.createElement("tr");
+                    row.setAttribute("id", "row");
+                    for (let k in event) {
+                        let cell = document.createElement("th");
+                        cell.setAttribute("class", "event_cells")
+                        cell.innerHTML = event[k];
+                        row.appendChild(cell)
+                    }
+                    event_table.appendChild(row)
+                })
+            }
+        };
+        xhttp.open("GET", "search.php?get_events=");
+        xhttp.send();
+    }
+
+    refresh_events()
+
+</script>
 
 </body>
 </html>

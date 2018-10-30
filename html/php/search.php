@@ -113,7 +113,7 @@ if (key($_GET) == "get_events") {
         die("Connection failed: " . $conn->connect_error);
     }
 
-    $q = "SELECT * FROM events";
+    $q = "SELECT * FROM events order by create_time desc";
 
     echo q_to_json($conn, $q);
     $conn->close();
