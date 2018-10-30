@@ -2,7 +2,7 @@
 	width: 60%;
 }
 
-#left_half>div, #right_half>div, #content, #filter_form {
+#left_half>div, #right_half>div, #content {
 	width: 100%;
 }
 

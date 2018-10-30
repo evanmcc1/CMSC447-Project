@@ -5,26 +5,6 @@
  * The DATA_HANDLER is the middleman between the user and the map/table.
  */
 
-// var xhr = new XMLHttpRequest();
-    // You will have to do some tweaking below to to match our submit forms
-// var url = "url?data=" + encodeURIComponent(
-//     JSON.stringify({"email": "hey@mail.com", "password": "101010"}));
-// xhr.open("GET", url, true);
-// xhr.setRequestHeader("Content-Type", "application/json");
-// xhr.onreadystatechange = function () {
-//     if (xhr.readyState === 4 && xhr.status === 200) {
-            // below json variable creates the JS object
-//         var json = JSON.parse(xhr.responseText);
-//         console.log(json.email + ", " + json.password);
-//     }
-// };
-
-/**
- * The DATA_HANDLER is responsible for keeping the map and tables 
- * synchronized. Each handler on the page which affets events should invoke a
- * method of EVENT_HANDLER. The event handler will deal with the map and tables.
- * The DATA_HANDLER is the middleman between the user and the map/table.
- */
 var OM_DATA_HANDLER = (function() {
 
     var EVENT_TABLE_OPTIONS = new RR.rrEventTableOptions(
@@ -40,7 +20,7 @@ var OM_DATA_HANDLER = (function() {
 
     var DATA_HANDLER = {
         // Queries data from the DB and then displays them on the page. 
-        processEvents: function(parameters) {
+        queryEvents: function(parameters) {
             LF_MAP.reset();
             LF_MAP.addAll(parameters);
             EVENT_FEED.setData(parameters);
@@ -53,18 +33,15 @@ var OM_DATA_HANDLER = (function() {
 
         // Moves the event from its event table to the other 
         migrate: function(row) {
+        	row.delete();
+
             if (EVENT_FEED.getRowPosition(row) > -1) {
-                row.delete();
                 GROUPED_EVENTS.addRow(row.getData());
                 LF_MAP.markSelected(row._row.data.event_id, true); // Shouldnt be accessing this??
             }
-            else if (GROUPED_EVENTS.getRowPosition(row) > -1) {
-                row.delete();
+            else {
                 EVENT_FEED.addRow(row.getData());
                 LF_MAP.markSelected(row._row.data.event_id, false);
-            }
-            else {
-            	alert("Undefined behavior in omMapInterface.js DATA_HANDLER migrate")
             }
         }
     };
@@ -74,11 +51,6 @@ var OM_DATA_HANDLER = (function() {
             DATA_HANDLER.select(e.target.parentNode);
         });
     }
-
-
-    // Idea for the form function. Allows interaction with embedded form
-    embedQueryForm("filter_form", "php/search.html", DATA_HANDLER.processEvents);
-
 
     document.getElementById("filter_button").addEventListener('click', function(e) {
     	var table = document.getElementById("grouped_events_table");
@@ -105,7 +77,7 @@ var OM_DATA_HANDLER = (function() {
 
 
 //// TESTING ///////////////////////
-OM_DATA_HANDLER.processEvents([
+OM_DATA_HANDLER.queryEvents([
 {
     "event_id":123,
     "severity":1, 

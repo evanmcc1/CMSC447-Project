@@ -83,9 +83,6 @@ var RR = {
                 this.displayed = [];
                 this.selected = null;
 
-                for (var point of this.shapes.points) {
-                    point.remove();
-                }
                 this.shapes.points = [];
 
                 for (var line of this.shapes.lines) {
@@ -156,9 +153,8 @@ var RR = {
 
             // Adds a point to the map for drawing lines.
             map.on('click', function(e) {
-                var lastPt = this.shapes.points[this.shapes.points.length - 1];
-
                 if (this.shapes.points.length) {    
+                    var lastPt = this.shapes.points[this.shapes.points.length - 1];
                     var line = L.polyline([lastPt, e.latlng], MAP_NS.VECTOR_OPTIONS);
                     line.addTo(this);
                     this.shapes.lines.push(line);
