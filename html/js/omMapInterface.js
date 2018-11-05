@@ -33,13 +33,13 @@ var OM_DATA_HANDLER = (function() {
 
         // Moves the event from its event table to the other 
         migrate: function(row) {
-        	row.delete();
-
             if (EVENT_FEED.getRowPosition(row) > -1) {
+            	row.delete();
                 GROUPED_EVENTS.addRow(row.getData());
                 LF_MAP.markSelected(row._row.data.event_id, true); // Shouldnt be accessing this??
             }
             else {
+            	row.delete();
                 EVENT_FEED.addRow(row.getData());
                 LF_MAP.markSelected(row._row.data.event_id, false);
             }
