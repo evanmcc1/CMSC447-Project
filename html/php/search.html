@@ -8,10 +8,71 @@
             background-color: #dddddd;
         }
 
+        /*Header CSS*/
+        div#header {
+            width: 100%;
+            height: 6em;
+            background-color: gray;
+            float: top;
+        }
+
+        img#header_img {
+            height: 5em;
+            margin: 0.5em;
+
+        }
+
+        div#nav_button_frame {
+            height: 6em;
+            width: auto;
+            float: right;
+        }
+        div.nav_buttons {
+            background-color: #555555;
+            height: 100%;
+            width: 8em;
+            float: right;
+            margin-left: 1em;
+            padding: auto;
+            display: none;
+            vertical-align: middle;
+        }
+
+        p.nav {
+            font-size: larger;
+            text-align: center;
+            vertical-align: middle;
+        }
 
     </style>
 </head>
 <body>
+
+<!--Header HTML-->
+<div id="header">
+    <img id="header_img" src="http://rr.huganir.com/image/header_logo.png">
+    <div id="nav_button_frame">
+        <div id="logout" class="nav_buttons"><p class="nav">Logout</p></div>
+        <div id="cc" class="nav_buttons"><p class="nav">Call<br>Center</p></div>
+        <div id="om" class="nav_buttons"><p class="nav">Operations<br>Manager</p></div>
+        <div id="oc" class="nav_buttons"><p class="nav">Operations<br>Chief</p></div>
+        <script>
+            <!--The privs will be returned by the user query at page load-->
+            privs = "110"
+            document.querySelector("#logout").setAttribute("style", "display: table-cell;")
+            if (privs.charAt(0) === "1") {
+                document.querySelector("#cc").setAttribute("style", "display: table-cell;")
+            }
+            if (privs.charAt(1) === "1") {
+                document.querySelector("#om").setAttribute("style", "display: table-cell;")
+            }
+            if (privs.charAt(2) === "1") {
+                document.querySelector("#oc").setAttribute("style", "display: table-cell;")
+            }
+        </script>
+    </div>
+</div>
+
 
 <form action="search.php" method="get">
     <input type="hidden" name="search_callers">

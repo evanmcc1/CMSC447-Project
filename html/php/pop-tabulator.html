@@ -8,10 +8,12 @@
             background-color: #dddddd;
             text-align: right;
         }
+
         th.event_cells {
             font-size: small;
             text-align: left;
         }
+
         tr#header {
             background-color: #777777;
         }
@@ -22,38 +24,40 @@
 
 
     </style>
+    <link href="https://unpkg.com/tabulator-tables@4.0.5/dist/css/tabulator.min.css" rel="stylesheet">
+    <script type="text/javascript" src="https://unpkg.com/tabulator-tables@4.0.5/dist/js/tabulator.min.js"></script>
 </head>
 <body>
 
 <!--<table>-->
-    <!--<tr>-->
-        <!--<form action="pop.php" method="post">-->
-            <!--<input type="hidden" name="add_caller">-->
+<!--<tr>-->
+<!--<form action="pop.php" method="post">-->
+<!--<input type="hidden" name="add_caller">-->
 
-            <!--<th>-->
-                <!--<h3>Create Caller:</h3>-->
-            <!--</th>-->
-            <!--<th>-->
-                <!--fname-->
-                <!--<input type="text" name="fname">-->
-            <!--</th>-->
-            <!--<th>-->
-                <!--lname-->
-                <!--<input type="text" name="lname">-->
-            <!--</th>-->
-            <!--<th>-->
-                <!--phone-->
-                <!--<input type="text" name="phone">-->
-            <!--</th>-->
-            <!--<th>-->
-                <!--<input type="submit">-->
-            <!--</th>-->
+<!--<th>-->
+<!--<h3>Create Caller:</h3>-->
+<!--</th>-->
+<!--<th>-->
+<!--fname-->
+<!--<input type="text" name="fname">-->
+<!--</th>-->
+<!--<th>-->
+<!--lname-->
+<!--<input type="text" name="lname">-->
+<!--</th>-->
+<!--<th>-->
+<!--phone-->
+<!--<input type="text" name="phone">-->
+<!--</th>-->
+<!--<th>-->
+<!--<input type="submit">-->
+<!--</th>-->
 
-        <!--</form>-->
-    <!--</tr>-->
-    <!--<tr>-->
+<!--</form>-->
+<!--</tr>-->
+<!--<tr>-->
 
-    <!--</tr>-->
+<!--</tr>-->
 <!--</table>-->
 <br>
 <table>
@@ -108,8 +112,10 @@
                 Address 1
                 <input type="text" name="event_info.address">
                 <br>
-                City, State
+                City
                 <input type="text" name="event_info.city">
+                <br>
+                State
                 <input type="text" name="event_info.state" size="1">
                 <br>
                 Zip
@@ -186,6 +192,49 @@
 <table id="events"></table>
 
 <script>
+    function create_events() {
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                // Typical action to be performed when the document is ready:
+                var events = JSON.parse(xhttp.responseText);
+                var event_table = document.querySelector("#events");
+                event_table.innerHTML = "";
+                var tbody = document.createElement("tbody")
+                events.forEach(function (event, i) {
+                    var row;
+                    if (i === 0) {
+                        thr = document.createElement("thread")
+                        row = document.createElement("tr");
+                        row.setAttribute("id", "header");
+                        for (let k in event) {
+                            var cell = document.createElement("th");
+                            cell.innerHTML = k;
+                            row.appendChild(cell)
+                        }
+                        event_table.appendChild(thr)
+                        thr.appendChild(row)
+                    }
+                    event_table.appendChild(thr)
+                    row = document.createElement("tr");
+                    row.setAttribute("id", "row");
+
+                    for (let k in event) {
+                        let cell = document.createElement("td");
+                        cell.setAttribute("class", "event_cells")
+                        cell.innerHTML = event[k];
+                        row.appendChild(cell)
+                    }
+                    tbody.appendChild(row)
+                })
+                event_table.appendChild(tbody)
+                var table = new Tabulator("#events", {});
+            }
+        };
+        xhttp.open("GET", "search.php?get_events=");
+        xhttp.send();
+    }
+
     function refresh_events() {
         var xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function () {
@@ -194,9 +243,11 @@
                 var events = JSON.parse(xhttp.responseText);
                 var event_table = document.querySelector("#events");
                 event_table.innerHTML = "";
+                var tbody = document.createElement("tbody")
                 events.forEach(function (event, i) {
                     var row;
                     if (i === 0) {
+                        thr = document.createElement("thread")
                         row = document.createElement("tr");
                         row.setAttribute("id", "header");
                         for (let k in event) {
@@ -204,25 +255,30 @@
                             cell.innerHTML = k;
                             row.appendChild(cell)
                         }
-                        event_table.appendChild(row)
+                        event_table.appendChild(thr)
+                        thr.appendChild(row)
                     }
+                    event_table.appendChild(thr)
                     row = document.createElement("tr");
                     row.setAttribute("id", "row");
+
                     for (let k in event) {
-                        let cell = document.createElement("th");
+                        let cell = document.createElement("td");
                         cell.setAttribute("class", "event_cells")
                         cell.innerHTML = event[k];
                         row.appendChild(cell)
                     }
-                    event_table.appendChild(row)
+                    tbody.appendChild(row)
                 })
+                event_table.appendChild(tbody)
+                var table = new Tabulator("#events", {});
             }
         };
         xhttp.open("GET", "search.php?get_events=");
         xhttp.send();
     }
 
-    refresh_events()
+    create_events();
 
 </script>
 
