@@ -52,25 +52,6 @@ var OM_DATA_HANDLER = (function() {
         });
     }
 
-    document.getElementById("filter_button").addEventListener('click', function(e) {
-    	var table = document.getElementById("grouped_events_table");
-    	var toolbar = document.getElementById("groups_toolbar");
-    	var form = document.getElementById("filter_form");
-
-    	if (e.target.textContent == "Filter") {
-    		e.target.textContent = "Done";
-	    	toolbar.style.display = "none";
-	    	table.style.display = "none";
-	    	form.style.display = "block";
-	    }
-	    else {
-	    	e.target.textContent = "Filter";
-	    	form.style.display = "none";
-	    	toolbar.style.display = "block";
-	    	table.style.display = "block";
-	    }
-    });
-
     return DATA_HANDLER;
 })();
 
